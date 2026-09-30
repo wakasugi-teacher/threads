@@ -107,6 +107,13 @@ p { margin: 0 0 12px; }
 .warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
 .cta { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
 .cta .eyebrow { margin-bottom: 12px; }
+.gift { background: var(--rose-soft); border: 1px solid var(--line); border-radius: 14px; padding: 16px 16px 12px; }
+.gift p { margin: 0 0 10px; font-size: 15px; }
+.preview { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 10px; }
+.prow { display: flex; align-items: center; gap: 10px; }
+.prow .pn { flex: 0 0 22px; font-family: var(--num); font-weight: 600; font-size: 15px; color: var(--rose-deep); text-align: right; }
+.prow i { display: block; height: 10px; border-radius: 6px; background: var(--rose); opacity: .45; filter: blur(2.5px); }
+.prow.more { font-family: var(--num); color: var(--rose-deep); padding-left: 32px; line-height: 1; }
 .paste { font-family: var(--body); background: var(--rose-soft); border: 1px dashed var(--rose); border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.7; word-break: break-all; user-select: all; -webkit-user-select: all; }
 .copyrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .copy { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--rose); background: transparent; color: var(--rose-deep); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
@@ -236,6 +243,19 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <p class="eyebrow">Next step</p>
       <p id="ctalead"></p>
       <p id="ctahow"></p>
+      <div class="gift">
+        <h3>部屋で受け取れる物</h3>
+        <p id="giftlead"></p>
+        <div class="preview" aria-hidden="true">
+          <div class="prow"><span class="pn">1</span><i style="width:78%"></i></div>
+          <div class="prow"><span class="pn">2</span><i style="width:62%"></i></div>
+          <div class="prow"><span class="pn">3</span><i style="width:70%"></i></div>
+          <div class="prow"><span class="pn">4</span><i style="width:55%"></i></div>
+          <div class="prow more">…</div>
+          <div class="prow"><span class="pn">14</span><i style="width:84%"></i></div>
+        </div>
+        <p class="small" id="giftroute"></p>
+      </div>
       <h3 id="pastetitle"></h3>
       <div class="paste" id="paste"></div>
       <a class="primary" id="ctabtn" href="#" target="_blank" rel="noopener"></a>
@@ -409,6 +429,9 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("redflag", C.redflag);
     var ex = C.extra ? C.extra(answers) : ""; text("rextra", ex); $("rextra").hidden = !ex;
     text("ctalead", C.cta.lead); text("ctahow", C.cta.how);
+    var fl = ""; (F.faces || []).forEach(function (f) { if (f.key === C.key) fl = f.label; });
+    text("giftlead", "あなたの型（" + r.name + "）の2週間表。1日ずつ、やることが書いてあります。部屋の中だけで配っています。");
+    text("giftroute", "入ったら、いちばん上のアナウンスの「型別の2週間表」→「" + fl + "」→「" + r.name + "」で開きます。");
     text("pastetitle", C.cta.pasteTitle || "部屋に貼る1行");
     var line = C.summary ? C.summary(answers, r.name, hearingLabels()) : ("【" + C.title + "】" + r.name);
     text("paste", line); text("copied", "");

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbf1ee">
+<meta name="robots" content="noindex">
+<title>型別の2週間表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<style>
+/* 型別の2週間表。部屋（オプチャ）のアナウンスに貼った鍵つきリンクからだけ開ける。表の中身は plans/data.enc（暗号化）に入っていて、鍵がないと読めない */
+:root {
+  --bg: #fbf1ee; --bg2: #f6e3de; --paper: #fffaf8; --fg: #5a3a35; --muted: #8f6d66; --line: #e9d3cb;
+  --rose: #c48f79; --rose-deep: #a6705e; --rose-soft: #f7e7e1; --warn: #a5473a; --warn-soft: #fbe8e3;
+  --grad: linear-gradient(90deg, #e3b7a2 0%, #c58e77 52%, #ac7360 100%);
+  --shadow: 0 12px 30px rgba(150, 95, 80, .14);
+  --display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  --num: "Cormorant Garamond", "Shippori Mincho", serif;
+  color-scheme: light;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { height: 100%; }
+body { min-height: 100%; margin: 0; background: var(--bg2) linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%) fixed; color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.85; -webkit-font-smoothing: antialiased; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.wrap { max-width: 520px; margin: 0 auto; padding-block: 22px 56px; padding-inline: 20px; min-width: 0; }
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; }
+.brand .name { font-family: var(--display); font-size: 14px; letter-spacing: .12em; }
+.brand .sub { font-family: var(--num); font-size: 12px; letter-spacing: .22em; color: var(--rose-deep); text-transform: uppercase; }
+.eyebrow { font-family: var(--num); font-size: 12px; letter-spacing: .24em; color: var(--rose-deep); text-transform: uppercase; margin: 0 0 10px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 27px; line-height: 1.45; letter-spacing: .02em; margin: 0 0 12px; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 22px; line-height: 1.5; margin: 0 0 10px; text-wrap: balance; }
+h3 { font-family: var(--num); font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--rose-deep); margin: 0 0 8px; font-weight: 600; }
+p { margin: 0 0 12px; }
+.lead { color: var(--muted); font-size: 15px; }
+.small { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.screen { animation: rise .32s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.choice { display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); font: inherit; font-size: 16px; line-height: 1.6; text-align: left; cursor: pointer; transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
+.choice .mark { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--rose); display: grid; place-items: center; font-family: var(--num); font-weight: 600; font-size: 17px; color: var(--rose-deep); }
+.choice .body { min-width: 0; }
+.choice small { display: block; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.choice:hover { border-color: var(--rose); box-shadow: var(--shadow); transform: translateY(-1px); }
+.choice:focus-visible, .primary:focus-visible, .ghost:focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+.primary { display: block; width: 100%; padding: 17px 18px; border-radius: 999px; border: 0; background: var(--grad); color: #fff; font: inherit; font-size: 16px; font-weight: 700; letter-spacing: .06em; text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 10px 24px rgba(165, 105, 88, .3), inset 0 1px 0 rgba(255, 255, 255, .4); }
+.ghost { background: none; border: 0; color: var(--muted); font: inherit; font-size: 14px; padding: 10px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
+.goal { background: var(--grad); color: #fff; border-radius: 18px; padding: 20px 22px; box-shadow: 0 12px 28px rgba(165, 105, 88, .28); }
+.goal h3 { color: #fff; opacity: .85; }
+.goal p { margin: 0; }
+.days { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.day { display: grid; grid-template-columns: 44px 1fr 28px; gap: 12px; align-items: start; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.day .n { font-family: var(--num); font-weight: 600; font-size: 22px; line-height: 1.2; color: var(--rose-deep); font-variant-numeric: tabular-nums; }
+.day .n small { display: block; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.day .t { font-size: 14.5px; line-height: 1.7; min-width: 0; }
+.day.week { border-color: var(--rose); background: var(--rose-soft); }
+.day input { width: 22px; height: 22px; margin: 4px 0 0; accent-color: var(--rose-deep); cursor: pointer; }
+.day.done { background: var(--rose-soft); }
+.day.done .t { color: var(--muted); }
+.warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
+.progress { display: flex; justify-content: space-between; align-items: baseline; }
+.progress .num { font-family: var(--num); font-size: 30px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.progress .num i { font-style: italic; font-size: 16px; color: var(--muted); margin-left: 4px; }
+footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { .screen { animation: none; } .choice { transition: none; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="brand"><span class="name">腸リバース研究室</span><span class="sub">14-day plan</span></header>
+
+  <section id="gate" class="screen stack" hidden>
+    <div>
+      <p class="eyebrow">Members only</p>
+      <h1>この表は、部屋の中だけで配っています</h1>
+      <p class="lead" id="gate_msg">腸リバース研究室（LINEのオープンチャット）のアナウンスにあるリンクから開いてください。鍵のない住所では、表は出ません。</p>
+    </div>
+    <div class="card stack">
+      <p>まだ入っていない人は、こちらから。匿名で入れます。入ったら、いちばん上のアナウンスのリンクを押すと、この表が開きます。</p>
+      <a class="primary" id="gate_btn" href="https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener">オプチャで相談してみる</a>
+      <p class="small">自分の型がまだ分からない人は、<a href="./" style="color:var(--rose-deep)">体のサインチェック</a>（1分・8問）で分かります。</p>
+    </div>
+  </section>
+
+  <section id="loading" class="screen stack">
+    <p class="lead">表を開いています。</p>
+  </section>
+
+  <section id="faces" class="screen stack" hidden>
+    <div>
+      <p class="eyebrow">Step 1</p>
+      <h1>どの症状の表を見ますか？</h1>
+      <p class="lead">タイプチェックで出た型の表を開きます。型が分からない人は、先に<a href="./" style="color:var(--rose-deep)">体のサインチェック</a>を。</p>
+    </div>
+    <div class="stack" id="f_list"></div>
+  </section>
+
+  <section id="types" class="screen stack" hidden>
+    <div>
+      <p class="eyebrow" id="t_face"></p>
+      <h1>あなたの型は？</h1>
+      <p class="lead">報告の1行に書いた型の名前を選んでください。</p>
+    </div>
+    <div class="stack" id="t_list"></div>
+    <button class="ghost" id="t_back" type="button">症状の一覧に戻る</button>
+  </section>
+
+  <section id="plan" class="screen stack" hidden>
+    <div>
+      <p class="eyebrow" id="p_face"></p>
+      <h1 id="p_name"></h1>
+      <p class="lead">毎日、その日の行を読んで、やったら✓。✓はこの端末の中だけに残ります。スクショで保存しても大丈夫です。</p>
+    </div>
+    <div class="goal"><h3>2週間後にこうなっている</h3><p id="p_goal"></p></div>
+    <div class="progress"><span class="num" id="p_done">0<i>/ 14</i></span><span class="small">✓した日</span></div>
+    <ol class="days" id="p_days"></ol>
+    <div class="card"><h3>判定のしかた</h3><p id="p_check" style="margin:0"></p></div>
+    <div class="warn" id="p_caution"></div>
+    <div class="card stack">
+      <h3>14日目のあと</h3>
+      <p style="margin:0">14日目の判定を、部屋の報告のスレッドに一言（「合格・形が寄った」だけでいい）。合わなかった所を、あなたに合わせて直します。</p>
+    </div>
+    <button class="ghost" id="p_back" type="button">型の一覧に戻る</button>
+    <footer>僕は医師ではありません。ここに書いたのは、食べ方と動き方の順番だけです。数字の判定と薬のことは、主治医と薬剤師に。</footer>
+  </section>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var D = null; var face = null; var type = null;
+  var MARKS = ["A", "B", "C", "D", "E", "F", "G"];
+  var SCREENS = ["gate", "loading", "faces", "types", "plan"];
+  function show(id) {
+    SCREENS.forEach(function (k) {
+      var el = $(k); var on = (k === id); el.hidden = !on;
+      if (on) { el.classList.remove("screen"); void el.offsetWidth; el.classList.add("screen"); }
+    });
+    window.scrollTo(0, 0);
+  }
+  function text(id, s) { $(id).textContent = s || ""; }
+  function param(name) { var m = new RegExp("[?&]" + name + "=([^&#]*)").exec(location.search); return m ? decodeURIComponent(m[1]) : ""; }
+
+  // 鍵で復号（PBKDF2-SHA256 150,000回 → AES-GCM）。build_plans.py と対
+  function b64(s) { var bin = atob(s); var a = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return a; }
+  function decrypt(b64text, key) {
+    var all = b64(b64text.trim());
+    var salt = all.slice(0, 16), iv = all.slice(16, 28), ct = all.slice(28);
+    var enc = new TextEncoder();
+    return crypto.subtle.importKey("raw", enc.encode(key), "PBKDF2", false, ["deriveKey"]).then(function (km) {
+      return crypto.subtle.deriveKey({ name: "PBKDF2", salt: salt, iterations: 150000, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    }).then(function (k) { return crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, k, ct); })
+      .then(function (pt) { return JSON.parse(new TextDecoder().decode(pt)); });
+  }
+
+  function choiceButton(label, sub, mark, onClick) {
+    var b = document.createElement("button"); b.type = "button"; b.className = "choice";
+    var m = document.createElement("span"); m.className = "mark"; m.textContent = mark;
+    var body = document.createElement("span"); body.className = "body"; body.textContent = label;
+    if (sub) { var sm = document.createElement("small"); sm.textContent = sub; body.appendChild(sm); }
+    b.appendChild(m); b.appendChild(body); b.addEventListener("click", onClick); return b;
+  }
+  function faceLabel(key) { var l = ""; D.faces.forEach(function (f) { if (f.key === key) l = f.label; }); return l; }
+
+  function showFaces() {
+    var box = $("f_list"); box.innerHTML = "";
+    D.faces.forEach(function (f, i) {
+      var n = Object.keys(D.plans[f.key] || {}).length;
+      box.appendChild(choiceButton(f.label, n + "つの型", MARKS[i], function () { face = f.key; showTypes(); }));
+    });
+    show("faces");
+  }
+  function showTypes() {
+    text("t_face", faceLabel(face));
+    var box = $("t_list"); box.innerHTML = "";
+    Object.keys(D.plans[face]).forEach(function (k, i) {
+      var p = D.plans[face][k];
+      box.appendChild(choiceButton(p.name, "", MARKS[i], function () { type = k; showPlan(); }));
+    });
+    show("types");
+  }
+  function storeKey() { return "plan:" + face + ":" + type; }
+  function loadDone() { try { return JSON.parse(localStorage.getItem(storeKey()) || "[]"); } catch (e) { return []; } }
+  function saveDone(arr) { try { localStorage.setItem(storeKey(), JSON.stringify(arr)); } catch (e) {} }
+  function showPlan() {
+    var p = D.plans[face][type];
+    text("p_face", faceLabel(face) + "の表"); text("p_name", p.name); text("p_goal", p.goal);
+    text("p_check", p.check); text("p_caution", p.caution);
+    var done = loadDone();
+    var ol = $("p_days"); ol.innerHTML = "";
+    p.days.forEach(function (d, i) {
+      var li = document.createElement("li"); li.className = "day" + ((i === 6 || i === 13) ? " week" : "") + (done.indexOf(i) >= 0 ? " done" : "");
+      var n = document.createElement("span"); n.className = "n"; n.innerHTML = (i + 1) + "<small>day</small>";
+      var t = document.createElement("span"); t.className = "t"; t.textContent = d;
+      var c = document.createElement("input"); c.type = "checkbox"; c.checked = done.indexOf(i) >= 0; c.setAttribute("aria-label", (i + 1) + "日目 やった");
+      c.addEventListener("change", function () {
+        var arr = loadDone(); var at = arr.indexOf(i);
+        if (c.checked && at < 0) arr.push(i); if (!c.checked && at >= 0) arr.splice(at, 1);
+        saveDone(arr); li.classList.toggle("done", c.checked); $("p_done").innerHTML = arr.length + "<i>/ 14</i>";
+      });
+      li.appendChild(n); li.appendChild(t); li.appendChild(c); ol.appendChild(li);
+    });
+    $("p_done").innerHTML = done.length + "<i>/ 14</i>";
+    show("plan");
+  }
+
+  $("t_back").addEventListener("click", showFaces);
+  $("p_back").addEventListener("click", showTypes);
+
+  var key = param("k");
+  if (!key) { show("gate"); return; }
+  show("loading");
+  fetch("plans/data.enc", { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("no data"); return r.text(); })
+    .then(function (t) { return decrypt(t, key); })
+    .then(function (data) {
+      D = data;
+      var f = param("f"), ty = param("t");
+      if (f && D.plans[f] && ty && D.plans[f][ty]) { face = f; type = ty; showPlan(); } else if (f && D.plans[f]) { face = f; showTypes(); } else { showFaces(); }
+    })
+    .catch(function () { text("gate_msg", "この住所の鍵では開けませんでした。部屋のアナウンスにある、いちばん新しいリンクから開いてください。"); show("gate"); });
+})();
+</script>
+</body>
+</html>
