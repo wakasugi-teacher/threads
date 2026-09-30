@@ -22,9 +22,9 @@ window.TYPECHECK_FACES = {
   ],
   other: {
     label: "どれにも当てはまらない、別の悩み",
-    title: "そのまま部屋で聞いてください",
-    body: "チェックにない悩みは、部屋で直接答えています。入ったら、報告のスレッドに、いま困っていることを一言。翌日の20時に、僕からアドバイスしますね。匿名で入れます。相談だけでも大丈夫です。",
-    button: "オプチャに入る（匿名でOK）",
+    title: "そのまま部屋で相談してください",
+    body: "チェックにない悩みは、部屋で直接答えています。報告のスレッドに、いま困っていることを一言。翌日の20時に、僕からアドバイスしますね。匿名のままで大丈夫です。相談だけでも。",
+    button: "オプチャで相談してみる",
     url: "https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
     under: "LINEのオープンチャット「腸リバース研究室」が開きます。"
   },

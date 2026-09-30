@@ -238,9 +238,9 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <p id="ctahow"></p>
       <h3 id="pastetitle"></h3>
       <div class="paste" id="paste"></div>
-      <div class="copyrow"><button class="copy" id="copybtn" type="button">この1行をコピー</button><span class="small" id="copied"></span></div>
       <a class="primary" id="ctabtn" href="#" target="_blank" rel="noopener"></a>
       <p class="small" id="ctaunder"></p>
+      <div class="copyrow"><button class="copy" id="copybtn" type="button">1行をコピーだけする</button><span class="small" id="copied"></span></div>
       <p class="small" id="rchapter"></p>
     </div>
     <div>
@@ -376,7 +376,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("rname", r.name); text("rtag", r.tag); text("rwhy", r.why);
     text("rrisk", r.risk); $("risksec").hidden = !r.risk;
     text("rtoday", r.today); text("rtip", r.tip); $("rtip").hidden = !r.tip;
-    text("rchapter", "部屋のnoteでは、" + r.chapter + "から読んでください。");
+    text("rchapter", C.cta.note ? C.cta.note.replace("{chapter}", r.chapter) : ("部屋のnoteでは、" + r.chapter + "から読んでください。"));
     var flags = C.flags(answers);
     var chips = $("chips"); chips.innerHTML = "";
     ["材料", "合図", "出し方"].forEach(function (name) {
@@ -412,6 +412,15 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     } else { fallback(); }
   }
 
+  // 「オプチャで相談してみる」＝1行をコピーしてから、そのままLINEを開く（タップ1回）
+  function consult() {
+    var t = $("paste").textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () { text("copied", "1行をコピーしました。部屋の報告のスレッドに貼ってください"); })
+        .catch(function () { text("copied", "コピーできなかったので、左の「1行をコピーだけする」を押してください"); });
+    }
+  }
+
   function bind() {
     $("s_btn").addEventListener("click", showFaces);
     $("f_back").addEventListener("click", showStart);
@@ -419,6 +428,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
     $("d_back").addEventListener("click", showFaces);
     $("copybtn").addEventListener("click", copyLine);
+    $("ctabtn").addEventListener("click", consult);
   }
 
   load("types/index.js", function () {
