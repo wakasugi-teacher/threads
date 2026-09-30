@@ -64,6 +64,21 @@ p { margin: 0 0 12px; }
 .progress { display: flex; justify-content: space-between; align-items: baseline; }
 .progress .num { font-family: var(--num); font-size: 30px; color: var(--fg); font-variant-numeric: tabular-nums; }
 .progress .num i { font-style: italic; font-size: 16px; color: var(--muted); margin-left: 4px; }
+.progress .rank { font-family: var(--display); font-size: 14px; letter-spacing: .08em; color: var(--rose-deep); }
+.bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--grad); width: 0; transition: width .3s ease; }
+.ms { margin: 0; font-size: 14.5px; line-height: 1.7; }
+.day.today { border-color: var(--rose-deep); box-shadow: 0 0 0 2px var(--rose-soft), var(--shadow); }
+.day .n small.today-badge { color: var(--rose-deep); font-family: var(--body); font-size: 10px; letter-spacing: .05em; margin-top: 2px; }
+.graderow { display: flex; align-items: baseline; gap: 14px; }
+.grade { font-family: var(--num); font-weight: 600; font-size: 56px; line-height: 1; color: var(--rose-deep); }
+.gradetag { font-family: var(--display); font-size: 16px; color: var(--fg); }
+.pass { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); font-size: 14.5px; line-height: 1.6; cursor: pointer; }
+.pass input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--rose-deep); flex: 0 0 22px; }
+.pass.on { border-color: var(--rose); background: var(--rose-soft); }
+.paste { font-family: var(--body); background: var(--rose-soft); border: 1px dashed var(--rose); border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.7; word-break: break-all; user-select: all; -webkit-user-select: all; }
+.copyrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.copy { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--rose); background: transparent; color: var(--rose-deep); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
 footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
 @media (prefers-reduced-motion: reduce) { .screen { animation: none; } .choice { transition: none; } }
 </style>
@@ -115,13 +130,30 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <p class="lead">毎日、その日の行を読んで、やったら✓。✓はこの端末の中だけに残ります。スクショで保存しても大丈夫です。</p>
     </div>
     <div class="goal"><h3>2週間後にこうなっている</h3><p id="p_goal"></p></div>
-    <div class="progress"><span class="num" id="p_done">0<i>/ 14</i></span><span class="small">✓した日</span></div>
+    <div class="card stack" style="gap:10px">
+      <div class="progress"><span class="num" id="p_done">0<i>/ 14</i></span><span class="rank" id="p_rank"></span></div>
+      <div class="bar"><i id="p_bar"></i></div>
+      <p class="ms" id="p_ms"></p>
+    </div>
     <ol class="days" id="p_days"></ol>
-    <div class="card"><h3>判定のしかた</h3><p id="p_check" style="margin:0"></p></div>
+    <div class="card stack" style="gap:10px">
+      <h3>判定（✓が10日以上になってから）</h3>
+      <p class="small" id="p_check" style="margin:0"></p>
+      <div class="stack" id="p_pass" style="gap:8px"></div>
+    </div>
+    <div class="card stack" id="p_gradebox" style="gap:8px">
+      <h3>判定と、次にやること</h3>
+      <div class="graderow"><span class="grade" id="p_grade">–</span><span class="gradetag" id="p_gradetag"></span></div>
+      <p id="p_gradehow" style="margin:0"></p>
+    </div>
     <div class="warn" id="p_caution"></div>
     <div class="card stack">
-      <h3>14日目のあと</h3>
-      <p style="margin:0">14日目の判定を、部屋の報告のスレッドに一言（「合格・形が寄った」だけでいい）。合わなかった所を、あなたに合わせて直します。</p>
+      <h3>部屋に報告する</h3>
+      <p style="margin:0" id="p_reportlead"></p>
+      <div class="paste" id="p_report"></div>
+      <a class="primary" id="p_reportbtn" href="https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener">部屋に報告する</a>
+      <div class="copyrow"><button class="copy" id="p_copy" type="button">1行をコピーだけする</button><span class="small" id="p_copied"></span></div>
+      <p class="small" style="margin:0">ボタンを押すと、上の1行をコピーして部屋が開きます。報告のスレッドに貼ってください。翌日の20時に、僕から返します。</p>
     </div>
     <button class="ghost" id="p_back" type="button">型の一覧に戻る</button>
     <footer>僕は医師ではありません。ここに書いたのは、食べ方と動き方の順番だけです。数字の判定と薬のことは、主治医と薬剤師に。</footer>
@@ -182,30 +214,119 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     });
     show("types");
   }
-  function storeKey() { return "plan:" + face + ":" + type; }
-  function loadDone() { try { return JSON.parse(localStorage.getItem(storeKey()) || "[]"); } catch (e) { return []; } }
-  function saveDone(arr) { try { localStorage.setItem(storeKey(), JSON.stringify(arr)); } catch (e) {} }
+  // 端末の中だけに残す記録（✓した日・できたこと・初日）
+  function skey(s) { return "plan:" + face + ":" + type + (s ? ":" + s : ""); }
+  function getJ(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v === null ? d : v; } catch (e) { return d; } }
+  function setJ(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function todayStr() { var d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function dayIndex(start) {
+    if (!start) return 0;
+    var s = new Date(start + "T00:00:00"); var n = new Date(); n.setHours(0, 0, 0, 0);
+    return Math.min(14, Math.max(1, Math.round((n - s) / 86400000) + 1));
+  }
+  function rank(n) { return n >= 14 ? "卒業研究員" : n >= 10 ? "上級研究員" : n >= 7 ? "主任研究員" : n >= 3 ? "研究員" : "見習い研究員"; }
+  function milestone(n) {
+    if (n >= 14) return "14日達成。下の「判定」に✓を付けると、A〜Dと次にやることが出ます。";
+    if (n >= 10) return "判定ができる回数（10日）に届きました。14日目まで続けて、判定を。";
+    if (n >= 7) return "折り返し。1週目の見直しの日です。下の1行を部屋に貼ると、僕が返します。";
+    if (n >= 3) return "3日続きました。体が慣れ始める頃です。";
+    if (n >= 1) return "始まりました。1〜3日目は、体が変わる前の日。続けるだけで合格です。";
+    return "1日目に✓を付けた日が、初日です。きょうの分だけ付けてください。";
+  }
+  // A〜D＝✓の数（続いたか）×できたこと（変わったか）
+  function grade(n, pc) {
+    if (n < 10) return "D";
+    if (pc === 0) return "C";
+    if (n >= 12 && pc >= 2) return "A";
+    return "B";
+  }
+  function gradeText(g, p, n) {
+    if (g === "A") return ["合格。よく続きました", "同じメニューで4週目まで続けてください。4週目に回数（血糖なら健診の数字）で見ます。部屋には「判定A・続けます」と一言。"];
+    if (g === "B") return ["合格ライン", "増えた項目を続けてください。合わなかった1つを部屋で報告してもらえれば、そこをあなたに合わせて直します。"];
+    if (g === "C") return ["続いたが、変化はまだ", "やることは続きました。変化がまだなら、量か種類が足りない可能性が高いです。次の一手＝" + (p.next || "量を1段上げる") + "。それでもう2週間。部屋で「判定C」と報告してもらえれば、量を一緒に決めます。"];
+    if (n < 10 && n >= 7) return ["判定はまだ（✓が10日で出ます）", "あと" + (10 - n) + "日で判定できます。抜けた日の理由（時刻・買い物・忙しさ）を1つだけ直して続けてください。"];
+    return ["続かなかった日が多い", "責めなくて大丈夫です。やることが多すぎたか、時刻が合っていません。1日目の行だけに絞って、もう2週間。部屋で「判定D」と報告してもらえれば、続く形に組み替えます。"];
+  }
+
+  var built = "";   // いま行を作ってある face:type
+  function render() {
+    var p = D.plans[face][type];
+    var done = getJ(skey(), []), passes = getJ(skey("pass"), []), start = getJ(skey("start"), "");
+    var n = done.length, di = dayIndex(start);
+    $("p_done").innerHTML = n + "<i>/ 14</i>";
+    $("p_bar").style.width = Math.round(n / 14 * 100) + "%";
+    text("p_rank", rank(n)); text("p_ms", milestone(n));
+    var rows = document.querySelectorAll("#p_days .day");
+    for (var i = 0; i < rows.length; i++) {
+      rows[i].classList.toggle("done", done.indexOf(i) >= 0);
+      rows[i].classList.toggle("today", !!start && (i + 1) === di && n < 14);
+      var b = rows[i].querySelector(".today-badge"); if (b) b.hidden = !(start && (i + 1) === di && n < 14);
+    }
+    var names = passes.map(function (i) { return (p.pass || [])[i]; }).filter(Boolean);
+    var ready = n >= 10 || (start && di >= 14);
+    var g = ready ? grade(n, names.length) : "";
+    var gt = ready ? gradeText(g, p, n) : (n >= 7 ? gradeText("D", p, n) : ["判定はまだ", "✓が10日になると、A〜Dの判定と「次にやること」がここに出ます。"]);
+    text("p_grade", ready ? g : "–"); text("p_gradetag", gt[0]); text("p_gradehow", gt[1]);
+    var line = "【" + faceLabel(face) + "・" + p.name + "】✓" + n + "/14日" + (start ? "・" + di + "日目" : "");
+    if (names.length) line += "／できた：" + names.join("、");
+    if (ready) line += "／判定" + g;
+    text("p_report", line);
+    text("p_reportlead", ready ? "判定の1行です。貼ってもらえれば、次の2週間をあなたに合わせて組みます。" : n >= 7 ? "1週目の見直しの1行です。貼ってもらえれば、2週目の直し方を返します。" : "途中でも報告できます。✓の数と、できたことが1行になります。");
+  }
+
   function showPlan() {
     var p = D.plans[face][type];
     text("p_face", faceLabel(face) + "の表"); text("p_name", p.name); text("p_goal", p.goal);
     text("p_check", p.check); text("p_caution", p.caution);
-    var done = loadDone();
-    var ol = $("p_days"); ol.innerHTML = "";
-    p.days.forEach(function (d, i) {
-      var li = document.createElement("li"); li.className = "day" + ((i === 6 || i === 13) ? " week" : "") + (done.indexOf(i) >= 0 ? " done" : "");
-      var n = document.createElement("span"); n.className = "n"; n.innerHTML = (i + 1) + "<small>day</small>";
-      var t = document.createElement("span"); t.className = "t"; t.textContent = d;
-      var c = document.createElement("input"); c.type = "checkbox"; c.checked = done.indexOf(i) >= 0; c.setAttribute("aria-label", (i + 1) + "日目 やった");
-      c.addEventListener("change", function () {
-        var arr = loadDone(); var at = arr.indexOf(i);
-        if (c.checked && at < 0) arr.push(i); if (!c.checked && at >= 0) arr.splice(at, 1);
-        saveDone(arr); li.classList.toggle("done", c.checked); $("p_done").innerHTML = arr.length + "<i>/ 14</i>";
+    if (built !== face + ":" + type) {
+      built = face + ":" + type;
+      var ol = $("p_days"); ol.innerHTML = "";
+      p.days.forEach(function (d, i) {
+        var li = document.createElement("li"); li.className = "day" + ((i === 6 || i === 13) ? " week" : "");
+        var nn = document.createElement("span"); nn.className = "n"; nn.innerHTML = (i + 1) + "<small>day</small><small class=\"today-badge\" hidden>きょう</small>";
+        var t = document.createElement("span"); t.className = "t"; t.textContent = d;
+        var c = document.createElement("input"); c.type = "checkbox"; c.setAttribute("aria-label", (i + 1) + "日目 やった");
+        c.checked = getJ(skey(), []).indexOf(i) >= 0;
+        c.addEventListener("change", function () {
+          var arr = getJ(skey(), []); var at = arr.indexOf(i);
+          if (c.checked && at < 0) arr.push(i); if (!c.checked && at >= 0) arr.splice(at, 1);
+          setJ(skey(), arr);
+          if (arr.length && !getJ(skey("start"), "")) setJ(skey("start"), todayStr());
+          render();
+        });
+        li.appendChild(nn); li.appendChild(t); li.appendChild(c); ol.appendChild(li);
       });
-      li.appendChild(n); li.appendChild(t); li.appendChild(c); ol.appendChild(li);
-    });
-    $("p_done").innerHTML = done.length + "<i>/ 14</i>";
+      var pb = $("p_pass"); pb.innerHTML = "";
+      (p.pass || []).forEach(function (label, i) {
+        var lab = document.createElement("label"); lab.className = "pass";
+        var c = document.createElement("input"); c.type = "checkbox"; c.checked = getJ(skey("pass"), []).indexOf(i) >= 0;
+        lab.classList.toggle("on", c.checked);
+        c.addEventListener("change", function () {
+          var arr = getJ(skey("pass"), []); var at = arr.indexOf(i);
+          if (c.checked && at < 0) arr.push(i); if (!c.checked && at >= 0) arr.splice(at, 1);
+          setJ(skey("pass"), arr); lab.classList.toggle("on", c.checked); render();
+        });
+        var s = document.createElement("span"); s.textContent = label;
+        lab.appendChild(c); lab.appendChild(s); pb.appendChild(lab);
+      });
+    }
+    render();
+    text("p_copied", "");
     show("plan");
+    var t = document.querySelector("#p_days .day.today");
+    if (t) setTimeout(function () { t.scrollIntoView({ block: "center", behavior: "smooth" }); }, 400);
   }
+
+  function copyReport(msgOk) {
+    var s = $("p_report").textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(s).then(function () { text("p_copied", msgOk); })
+        .catch(function () { text("p_copied", "コピーできなかったので、上の1行を長押しでコピーしてください"); });
+    } else { text("p_copied", "上の1行を長押しでコピーしてください"); }
+  }
+  $("p_copy").addEventListener("click", function () { copyReport("コピーしました"); });
+  $("p_reportbtn").addEventListener("click", function () { copyReport("1行をコピーしました。部屋の報告のスレッドに貼ってください"); });
 
   $("t_back").addEventListener("click", showFaces);
   $("p_back").addEventListener("click", showTypes);
