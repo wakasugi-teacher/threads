@@ -18,7 +18,7 @@ window.TYPECHECK_FACES = {
   // アクセスの計測（Umami Cloud＝先生だけが見られる画面で数える。答えの中身は送らない・押した回数だけ）
   // 先生のアカウントで作った「Website ID」を umami に入れると動く。空のままなら何も送らない。公開サイト（github.io）でだけ動き、手元の確認では数えない
   analytics: {
-    umami: ""
+    umami: "7f6ac8a4-68a2-4f10-9475-5570697548db"
   },
 
   question: "どの症状でお悩みですか？",
