@@ -225,9 +225,10 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     var s = new Date(start + "T00:00:00"); var n = new Date(); n.setHours(0, 0, 0, 0);
     return Math.min(14, Math.max(1, Math.round((n - s) / 86400000) + 1));
   }
-  function rank(n) { return n >= 14 ? "卒業研究員" : n >= 10 ? "上級研究員" : n >= 7 ? "主任研究員" : n >= 3 ? "研究員" : "見習い研究員"; }
+  // 階級＝研究所の順（見習い→研究員→主任→上席→主席。所長は先生）。卒業はさせない
+  function rank(n) { return n >= 14 ? "主席研究員" : n >= 10 ? "上席研究員" : n >= 7 ? "主任研究員" : n >= 3 ? "研究員" : "見習い研究員"; }
   function milestone(n) {
-    if (n >= 14) return "14日達成。下の「判定」に✓を付けると、A〜Dと次にやることが出ます。";
+    if (n >= 14) return "14日達成。主席研究員です。下の「判定」に✓を付けると、A〜Dと次にやることが出ます。所長（僕）に報告を。";
     if (n >= 10) return "判定ができる回数（10日）に届きました。14日目まで続けて、判定を。";
     if (n >= 7) return "折り返し。1週目の見直しの日です。下の1行を部屋に貼ると、僕が返します。";
     if (n >= 3) return "3日続きました。体が慣れ始める頃です。";
