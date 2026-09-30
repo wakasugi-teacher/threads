@@ -166,6 +166,15 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   var D = null; var face = null; var type = null;
   var MARKS = ["A", "B", "C", "D", "E", "F", "G"];
   var SCREENS = ["gate", "loading", "faces", "types", "plan"];
+  // 計測（チェックと同じUmami・回数だけ・公開サイトでだけ動く）。数えるのは「表を開いた」「門に当たった」「報告ボタン」
+  var UMAMI = "7f6ac8a4-68a2-4f10-9475-5570697548db";
+  var TRACK = false;
+  if (UMAMI && /github\.io$/.test(location.hostname)) {
+    var us = document.createElement("script"); us.defer = true; us.src = "https://cloud.umami.is/script.js";
+    us.setAttribute("data-website-id", UMAMI); document.head.appendChild(us); TRACK = true;
+  }
+  function track(name, data) { if (!TRACK) return; try { if (window.umami && window.umami.track) window.umami.track(name, data || {}); } catch (e) {} }
+
   function show(id) {
     SCREENS.forEach(function (k) {
       var el = $(k); var on = (k === id); el.hidden = !on;
@@ -314,6 +323,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     }
     render();
     text("p_copied", "");
+    track("plan_open", { face: face, type: p.name });
     show("plan");
     var t = document.querySelector("#p_days .day.today");
     if (t) setTimeout(function () { t.scrollIntoView({ block: "center", behavior: "smooth" }); }, 400);
@@ -327,13 +337,13 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     } else { text("p_copied", "上の1行を長押しでコピーしてください"); }
   }
   $("p_copy").addEventListener("click", function () { copyReport("コピーしました"); });
-  $("p_reportbtn").addEventListener("click", function () { copyReport("1行をコピーしました。部屋の報告のスレッドに貼ってください"); });
+  $("p_reportbtn").addEventListener("click", function () { track("plan_report", { face: face, type: D.plans[face][type].name, days: getJ(skey(), []).length }); copyReport("1行をコピーしました。部屋の報告のスレッドに貼ってください"); });
 
   $("t_back").addEventListener("click", showFaces);
   $("p_back").addEventListener("click", showTypes);
 
   var key = param("k");
-  if (!key) { show("gate"); return; }
+  if (!key) { track("plan_gate", { why: "nokey" }); show("gate"); return; }
   show("loading");
   fetch("plans/data.enc", { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("no data"); return r.text(); })
     .then(function (t) { return decrypt(t, key); })
@@ -342,7 +352,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       var f = param("f"), ty = param("t");
       if (f && D.plans[f] && ty && D.plans[f][ty]) { face = f; type = ty; showPlan(); } else if (f && D.plans[f]) { face = f; showTypes(); } else { showFaces(); }
     })
-    .catch(function () { text("gate_msg", "この住所の鍵では開けませんでした。部屋のアナウンスにある、いちばん新しいリンクから開いてください。"); show("gate"); });
+    .catch(function () { track("plan_gate", { why: "badkey" }); text("gate_msg", "この住所の鍵では開けませんでした。部屋のアナウンスにある、いちばん新しいリンクから開いてください。"); show("gate"); });
 })();
 </script>
 </body>
