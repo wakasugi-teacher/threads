@@ -10,7 +10,7 @@ window.TYPECHECK_FACES = {
     title: "体のサインチェック",
     sub: "いま出ている体のサインから、あなたの型を知る",
     button: "START",
-    time: "所要時間 2分",
+    time: "所要時間 1分",
     count: "全8問",
     byline: "若すぎ先生・腸リバース研究室"
   },
