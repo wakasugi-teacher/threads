@@ -1,0 +1,350 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>体のサインチェック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<style>
+/* 上品なウェルネスの読み物。1画面1問。明朝の見出し・生成りの紙・深い緑1色・金の細線1本だけ */
+:root {
+  --bg: #eef1ec;
+  --paper: #fbfaf7;
+  --fg: #16221f;
+  --muted: #62716b;
+  --line: #d8ddd6;
+  --accent: #245c52;
+  --accent-ink: #f6f3ec;
+  --accent-soft: #e4ede7;
+  --gold: #b3955a;
+  --warn: #a54b39;
+  --warn-soft: #f7e9e4;
+  --shadow: 0 10px 30px rgba(22, 34, 31, .08);
+  --display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  --num: "Cormorant Garamond", "Shippori Mincho", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1614; --paper: #171f1c; --fg: #ebeee9; --muted: #9eaba4; --line: #2a3531;
+    --accent: #7fc3b3; --accent-ink: #0f1614; --accent-soft: #1d2b27; --gold: #c9ad74;
+    --warn: #ef9b86; --warn-soft: #3a231d; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1614; --paper: #171f1c; --fg: #ebeee9; --muted: #9eaba4; --line: #2a3531;
+  --accent: #7fc3b3; --accent-ink: #0f1614; --accent-soft: #1d2b27; --gold: #c9ad74;
+  --warn: #ef9b86; --warn-soft: #3a231d; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.85; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 520px; margin: 0 auto; padding-block: 28px 56px; padding-inline: 20px; min-width: 0; }
+
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 36px; }
+.brand .name { font-family: var(--display); font-size: 15px; letter-spacing: .12em; color: var(--fg); }
+.brand .sub { font-family: var(--num); font-size: 12px; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; }
+
+.eyebrow { font-family: var(--num); font-size: 12px; letter-spacing: .22em; color: var(--gold); text-transform: uppercase; margin: 0 0 10px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1.45; letter-spacing: .02em; margin: 0 0 14px; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 23px; line-height: 1.5; margin: 0 0 22px; text-wrap: balance; }
+h3 { font-family: var(--num); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin: 0 0 8px; font-weight: 500; }
+p { margin: 0 0 12px; }
+.lead { color: var(--muted); font-size: 15px; }
+.small { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.rule { height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 6px 0 18px; }
+
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.screen { animation: rise .32s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
+
+.choice { display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); font: inherit; font-size: 16px; line-height: 1.6; text-align: left; cursor: pointer; transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
+.choice .mark { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--num); font-size: 17px; color: var(--accent); }
+.choice .body { min-width: 0; }
+.choice small { display: block; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.choice:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+.choice:active { transform: none; }
+.choice:focus-visible, .primary:focus-visible, .ghost:focus-visible, .copy:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.primary { display: block; width: 100%; padding: 17px 18px; border-radius: 999px; border: 0; background: var(--accent); color: var(--accent-ink); font: inherit; font-size: 16px; font-weight: 700; letter-spacing: .06em; text-align: center; text-decoration: none; cursor: pointer; box-shadow: var(--shadow); }
+.ghost { background: none; border: 0; color: var(--muted); font: inherit; font-size: 14px; padding: 10px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+
+.progress { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.progress .num { font-family: var(--num); font-size: 34px; line-height: 1; color: var(--fg); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+.progress .num i { font-style: italic; color: var(--muted); font-size: 18px; margin-left: 4px; }
+.progress .phase { font-family: var(--num); font-size: 12px; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; }
+.bar { height: 2px; background: var(--line); margin-bottom: 26px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--gold); width: 0; transition: width .3s ease; }
+
+.result-hero { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 28px 22px 22px; box-shadow: var(--shadow); }
+.result-hero .type { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1.3; margin: 0 0 6px; letter-spacing: .02em; }
+.result-hero .tag { font-size: 14px; color: var(--muted); margin: 0 0 18px; }
+.section { padding-block: 18px; border-top: 1px solid var(--line); }
+.section:first-of-type { border-top: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 10px; }
+.chip { font-size: 13px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 500; }
+.today { background: var(--accent); color: var(--accent-ink); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
+.today h3 { color: var(--accent-ink); opacity: .75; }
+.today p { margin: 0 0 10px; }
+.today .small { color: var(--accent-ink); opacity: .8; }
+.warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
+.cta { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
+.cta .eyebrow { margin-bottom: 12px; }
+.paste { font-family: var(--body); background: var(--bg); border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.7; word-break: break-all; user-select: all; -webkit-user-select: all; }
+.copyrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.copy { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+.rules { font-size: 13px; color: var(--muted); padding-left: 18px; margin: 4px 0 0; line-height: 1.8; }
+footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { .screen { animation: none; } .bar > i, .choice { transition: none; } }
+</style>
+
+<main class="wrap">
+  <header class="brand"><span class="name">腸リバース研究室</span><span class="sub">Type Check</span></header>
+
+  <section id="faces" class="screen stack">
+    <div>
+      <p class="eyebrow">Body Signal Check</p>
+      <h1 id="f_title">体のサインチェック</h1>
+      <p class="lead" id="f_lead">読み込み中です。</p>
+    </div>
+    <h2 id="f_question"></h2>
+    <div class="stack" id="f_list"></div>
+    <p class="small" id="f_byline"></p>
+  </section>
+
+  <section id="direct" class="screen stack" hidden>
+    <div>
+      <p class="eyebrow">Ask directly</p>
+      <h1 id="d_title"></h1>
+    </div>
+    <div class="cta stack">
+      <p id="d_body"></p>
+      <a class="primary" id="d_btn" href="#" target="_blank" rel="noopener"></a>
+      <p class="small" id="d_under"></p>
+    </div>
+    <button class="ghost" id="d_back" type="button">最初に戻る</button>
+    <footer id="d_footer"></footer>
+  </section>
+
+  <section id="intro" class="screen stack" hidden>
+    <div>
+      <p class="eyebrow" id="i_eyebrow">8 questions</p>
+      <h1 id="title"></h1>
+      <p class="lead" id="lead"></p>
+    </div>
+    <button class="primary" id="start" type="button">はじめる</button>
+    <p class="small">答えは、この画面の中だけで使います。どこにも送りません。</p>
+    <button class="ghost" id="i_back" type="button">最初に戻る</button>
+    <p class="small" id="byline"></p>
+  </section>
+
+  <section id="quiz" class="screen" hidden>
+    <div class="progress"><span class="num" id="pnum">01<i>/ 08</i></span><span class="phase" id="phase"></span></div>
+    <div class="bar"><i id="pbar"></i></div>
+    <h2 id="qtext"></h2>
+    <div class="stack" id="choices"></div>
+    <button class="ghost" id="back" type="button">1つ戻る</button>
+  </section>
+
+  <section id="result" class="screen stack" hidden>
+    <div class="result-hero">
+      <p class="eyebrow">Your type</p>
+      <p class="type" id="rname"></p>
+      <p class="tag" id="rtag"></p>
+      <div class="section"><h3>なぜ</h3><p id="rwhy"></p></div>
+      <div class="section" id="risksec"><h3>放っておくと</h3><p id="rrisk"></p></div>
+      <div class="section"><h3>当てはまった場所</h3><div class="chips" id="chips"></div><p class="small">2つ以上当てはまる人がほとんどで、それが普通です。上の型は、その中の重点です。</p></div>
+    </div>
+    <div class="today">
+      <h3>きょうやること</h3>
+      <p id="rtoday"></p>
+      <p class="small" id="rtip"></p>
+    </div>
+    <div class="warn" id="redflag"></div>
+    <p id="rextra" class="small"></p>
+    <div class="cta stack">
+      <p class="eyebrow">Next step</p>
+      <p id="ctalead"></p>
+      <p id="ctahow"></p>
+      <h3 id="pastetitle"></h3>
+      <div class="paste" id="paste"></div>
+      <div class="copyrow"><button class="copy" id="copybtn" type="button">この1行をコピー</button><span class="small" id="copied"></span></div>
+      <a class="primary" id="ctabtn" href="#" target="_blank" rel="noopener"></a>
+      <p class="small" id="ctaunder"></p>
+      <p class="small" id="rchapter"></p>
+    </div>
+    <div>
+      <h3>分け方</h3>
+      <ul class="rules" id="rules"></ul>
+    </div>
+    <button class="ghost" id="again" type="button">最初に戻る</button>
+    <footer id="footer"></footer>
+  </section>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var F = null;      // 面の一覧
+  var C = null;      // いま選んだ面の設定
+  var answers = {};
+  var step = 0;
+  var all = [];      // questions + hearing をつなげた8問
+  var MARKS = ["A", "B", "C", "D", "E", "F"];
+
+  function text(id, s) { $(id).textContent = s || ""; }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function show(id) {
+    ["faces", "direct", "intro", "quiz", "result"].forEach(function (k) {
+      var el = $(k);
+      var on = (k === id);
+      el.hidden = !on;
+      if (on) { el.classList.remove("screen"); void el.offsetWidth; el.classList.add("screen"); }
+    });
+    window.scrollTo(0, 0);
+  }
+
+  // 設定ファイルを読む（scriptで読めない環境ではfetchで読む）
+  function load(src, done, fail) {
+    var s = document.createElement("script");
+    s.src = src;
+    s.onload = done;
+    s.onerror = function () {
+      fetch(src).then(function (r) { return r.text(); }).then(function (t) { new Function(t)(); done(); }).catch(fail);
+    };
+    document.head.appendChild(s);
+  }
+
+  function choiceButton(id, label, sub, mark, onClick) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "choice"; b.id = id;
+    var m = document.createElement("span"); m.className = "mark"; m.textContent = mark;
+    var body = document.createElement("span"); body.className = "body"; body.textContent = label;
+    if (sub) { var sm = document.createElement("small"); sm.textContent = sub; body.appendChild(sm); }
+    b.appendChild(m); b.appendChild(body);
+    b.addEventListener("click", onClick);
+    return b;
+  }
+
+  function showFaces() {
+    text("f_byline", F.byline); text("f_title", F.title); text("f_question", F.question); text("f_lead", F.lead);
+    var box = $("f_list"); box.innerHTML = "";
+    F.faces.forEach(function (f, i) {
+      box.appendChild(choiceButton("face_" + f.key, f.label, f.sub, MARKS[i], function () { pickFace(f.key); }));
+    });
+    box.appendChild(choiceButton("face_other", F.other.label, "", MARKS[F.faces.length], showDirect));
+    show("faces");
+  }
+
+  function showDirect() {
+    text("d_title", F.other.title); text("d_body", F.other.body);
+    var a = $("d_btn"); a.textContent = F.other.button; a.href = F.other.url;
+    text("d_under", F.other.under); text("d_footer", F.footer);
+    show("direct");
+  }
+
+  function pickFace(key) {
+    window.TYPECHECK = null;
+    load("types/" + key + ".js", function () {
+      C = window.TYPECHECK;
+      if (!C) { showDirect(); return; }
+      all = (C.questions || []).concat(C.hearing || []);
+      text("byline", F.byline); text("title", C.title); text("lead", C.lead); text("start", C.startLabel || "はじめる");
+      text("i_eyebrow", all.length + " questions");
+      show("intro");
+    }, showDirect);
+  }
+
+  function showQuestion() {
+    var q = all[step];
+    var n = all.length;
+    var nq = (C.questions || []).length;
+    $("pnum").innerHTML = pad(step + 1) + "<i>/ " + pad(n) + "</i>";
+    $("pbar").style.width = Math.round(step / n * 100) + "%";
+    text("phase", step < nq ? "Your type" : "Your first note");
+    text("qtext", q.text);
+    $("back").hidden = step === 0;
+    var box = $("choices"); box.innerHTML = "";
+    q.choices.forEach(function (c, i) {
+      box.appendChild(choiceButton("c_" + q.id + "_" + c.v, c.label, "", MARKS[i], function () {
+        answers[q.id] = c.v;
+        if (step + 1 < n) { step++; showQuestion(); } else { showResult(); }
+      }));
+    });
+    show("quiz");
+  }
+
+  function hearingLabels() {
+    var out = [];
+    (C.hearing || []).forEach(function (h) {
+      var v = answers[h.id];
+      var c = null;
+      h.choices.forEach(function (x) { if (x.v === v) c = x; });
+      if (c) out.push(h.short + "：" + (c.short || c.label));
+    });
+    return out;
+  }
+
+  function showResult() {
+    var k = C.decide(answers);
+    var r = C.results[k] || C.results.none;
+    text("rname", r.name); text("rtag", r.tag); text("rwhy", r.why);
+    text("rrisk", r.risk); $("risksec").hidden = !r.risk;
+    text("rtoday", r.today); text("rtip", r.tip); $("rtip").hidden = !r.tip;
+    text("rchapter", "部屋のnoteでは、" + r.chapter + "から読んでください。");
+    var flags = C.flags(answers);
+    var chips = $("chips"); chips.innerHTML = "";
+    ["材料", "合図", "出し方"].forEach(function (name) {
+      var s = document.createElement("span");
+      var on = flags.indexOf(name) >= 0;
+      s.className = "chip" + (on ? " on" : ""); s.textContent = (on ? "✓ " : "") + name;
+      chips.appendChild(s);
+    });
+    text("redflag", C.redflag);
+    var ex = C.extra ? C.extra(answers) : ""; text("rextra", ex); $("rextra").hidden = !ex;
+    text("ctalead", C.cta.lead); text("ctahow", C.cta.how);
+    text("pastetitle", C.cta.pasteTitle || "部屋に貼る1行");
+    var line = C.summary ? C.summary(answers, r.name, hearingLabels()) : ("【" + C.title + "】" + r.name);
+    text("paste", line); text("copied", "");
+    var a = $("ctabtn"); a.textContent = C.cta.button; a.href = C.cta.url;
+    text("ctaunder", C.cta.under);
+    var ul = $("rules"); ul.innerHTML = "";
+    (C.rules || []).forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+    text("footer", F.footer);
+    $("pbar").style.width = "100%";
+    show("result");
+  }
+
+  function copyLine() {
+    var t = $("paste").textContent;
+    function fallback() {
+      var range = document.createRange(); range.selectNodeContents($("paste"));
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      text("copied", "長押しでコピーしてください");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () { text("copied", "コピーしました"); }).catch(fallback);
+    } else { fallback(); }
+  }
+
+  function bind() {
+    $("start").addEventListener("click", function () { answers = {}; step = 0; showQuestion(); });
+    $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
+    $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
+    $("i_back").addEventListener("click", showFaces);
+    $("d_back").addEventListener("click", showFaces);
+    $("copybtn").addEventListener("click", copyLine);
+  }
+
+  load("types/index.js", function () {
+    F = window.TYPECHECK_FACES;
+    if (!F) { text("f_lead", "設定が読み込めませんでした。"); return; }
+    bind();
+    showFaces();
+  }, function () { text("f_lead", "設定が読み込めませんでした。"); });
+})();
+</script>
