@@ -1,83 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbf1ee">
 <title>体のサインチェック</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
 <style>
-/* 上品なウェルネスの読み物。1画面1問。明朝の見出し・生成りの紙・深い緑1色・金の細線1本だけ */
+/* 第5版：先生のイメージ画（桜・生成りのピンク・ローズゴールドの細線・明朝）に合わせた1画面1問のページ。色は1つの見た目に固定 */
 :root {
-  --bg: #eef1ec;
-  --paper: #fbfaf7;
-  --fg: #16221f;
-  --muted: #62716b;
-  --line: #d8ddd6;
-  --accent: #245c52;
-  --accent-ink: #f6f3ec;
-  --accent-soft: #e4ede7;
-  --gold: #b3955a;
-  --warn: #a54b39;
-  --warn-soft: #f7e9e4;
-  --shadow: 0 10px 30px rgba(22, 34, 31, .08);
+  --bg: #fbf1ee;
+  --bg2: #f6e3de;
+  --paper: #fffaf8;
+  --fg: #5a3a35;
+  --muted: #8f6d66;
+  --line: #e9d3cb;
+  --rose: #c48f79;
+  --rose-deep: #a6705e;
+  --rose-soft: #f7e7e1;
+  --warn: #a5473a;
+  --warn-soft: #fbe8e3;
+  --grad: linear-gradient(90deg, #e3b7a2 0%, #c58e77 52%, #ac7360 100%);
+  --shadow: 0 12px 30px rgba(150, 95, 80, .14);
   --display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
   --body: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
   --num: "Cormorant Garamond", "Shippori Mincho", serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0f1614; --paper: #171f1c; --fg: #ebeee9; --muted: #9eaba4; --line: #2a3531;
-    --accent: #7fc3b3; --accent-ink: #0f1614; --accent-soft: #1d2b27; --gold: #c9ad74;
-    --warn: #ef9b86; --warn-soft: #3a231d; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0f1614; --paper: #171f1c; --fg: #ebeee9; --muted: #9eaba4; --line: #2a3531;
-  --accent: #7fc3b3; --accent-ink: #0f1614; --accent-soft: #1d2b27; --gold: #c9ad74;
-  --warn: #ef9b86; --warn-soft: #3a231d; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
-  color-scheme: dark;
+  color-scheme: light;
 }
 [hidden] { display: none !important; }
 * { box-sizing: border-box; }
-html, body { margin: 0; }
-body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.85; -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 520px; margin: 0 auto; padding-block: 28px 56px; padding-inline: 20px; min-width: 0; }
+html { height: 100%; }
+body { min-height: 100%; margin: 0; background: var(--bg2) linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%) fixed; color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.85; -webkit-font-smoothing: antialiased; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.dots { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; color: #d6a28e; }
+.wrap { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding-block: 22px 56px; padding-inline: 20px; min-width: 0; }
 
-.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 36px; }
-.brand .name { font-family: var(--display); font-size: 15px; letter-spacing: .12em; color: var(--fg); }
-.brand .sub { font-family: var(--num); font-size: 12px; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; }
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 32px; }
+.brand .name { font-family: var(--display); font-size: 14px; letter-spacing: .12em; color: var(--fg); }
+.brand .sub { font-family: var(--num); font-size: 12px; letter-spacing: .22em; color: var(--rose-deep); text-transform: uppercase; }
 
-.eyebrow { font-family: var(--num); font-size: 12px; letter-spacing: .22em; color: var(--gold); text-transform: uppercase; margin: 0 0 10px; }
-h1 { font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1.45; letter-spacing: .02em; margin: 0 0 14px; text-wrap: balance; }
+.eyebrow { font-family: var(--num); font-size: 12px; letter-spacing: .24em; color: var(--rose-deep); text-transform: uppercase; margin: 0 0 10px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.45; letter-spacing: .02em; margin: 0 0 12px; text-wrap: balance; }
 h2 { font-family: var(--display); font-weight: 600; font-size: 23px; line-height: 1.5; margin: 0 0 22px; text-wrap: balance; }
-h3 { font-family: var(--num); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin: 0 0 8px; font-weight: 500; }
+h3 { font-family: var(--num); font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--rose-deep); margin: 0 0 8px; font-weight: 600; }
 p { margin: 0 0 12px; }
 .lead { color: var(--muted); font-size: 15px; }
 .small { font-size: 13px; color: var(--muted); line-height: 1.7; }
-.rule { height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 6px 0 18px; }
 
 .stack { display: flex; flex-direction: column; gap: 14px; }
 .screen { animation: rise .32s ease both; }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
+/* トップ画面 */
+.start { position: relative; min-height: calc(100vh - 80px); min-height: calc(100svh - 80px); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-block: 12px; }
+.deco { position: absolute; color: var(--rose); opacity: .55; pointer-events: none; }
+.deco.tl { left: -8px; top: 0; width: 66px; height: 66px; }
+.deco.tr { right: -6px; top: 118px; width: 64px; height: 78px; transform: scaleX(-1); }
+.deco.bl { left: -10px; bottom: 96px; width: 64px; height: 78px; }
+.deco.br { right: -4px; bottom: 0; width: 54px; height: 54px; }
+.eyebrow.big { font-size: 15px; letter-spacing: .34em; text-indent: .34em; margin: 0 0 12px; }
+.flourish { width: 210px; max-width: 80%; height: 30px; color: var(--rose); margin: 0 0 12px; }
+.hero-title { font-family: var(--display); font-weight: 600; font-size: clamp(29px, 8.4vw, 38px); letter-spacing: .05em; line-height: 1.35; margin: 0; text-wrap: balance; }
+.hero-rule { width: min(84%, 340px); height: 1px; background: var(--rose); opacity: .75; margin: 14px 0 12px; }
+.hero-sub { font-family: var(--display); font-size: 14px; letter-spacing: .06em; color: var(--muted); margin: 0 0 28px; line-height: 1.8; }
+.medal { width: min(66vw, 268px); max-width: 100%; aspect-ratio: 1; margin: 0 0 32px; filter: drop-shadow(0 16px 26px rgba(160, 100, 85, .22)); }
+.medal img { display: block; width: 100%; height: auto; }
+.start-btn { width: min(84%, 340px); padding: 17px 20px; border: 0; border-radius: 999px; background: var(--grad); color: #fff; font-family: var(--num); font-weight: 600; font-size: 30px; letter-spacing: .3em; text-indent: .3em; line-height: 1; box-shadow: 0 12px 26px rgba(165, 105, 88, .32), inset 0 1px 0 rgba(255, 255, 255, .4); cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.start-btn:hover { box-shadow: 0 14px 30px rgba(165, 105, 88, .4), inset 0 1px 0 rgba(255, 255, 255, .4); }
+.start-btn:active { transform: translateY(1px); }
+.hero-meta { font-family: var(--display); font-size: 17px; line-height: 1.7; margin: 20px 0 0; color: var(--fg); }
+.hero-by { font-family: var(--display); font-size: 13px; letter-spacing: .08em; color: var(--muted); margin: 16px 0 0; }
+
 .card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
 
 .choice { display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); font: inherit; font-size: 16px; line-height: 1.6; text-align: left; cursor: pointer; transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
-.choice .mark { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--num); font-size: 17px; color: var(--accent); }
+.choice .mark { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--rose); display: grid; place-items: center; font-family: var(--num); font-weight: 600; font-size: 17px; color: var(--rose-deep); }
 .choice .body { min-width: 0; }
 .choice small { display: block; font-size: 13px; color: var(--muted); line-height: 1.6; }
-.choice:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+.choice:hover { border-color: var(--rose); box-shadow: var(--shadow); transform: translateY(-1px); }
 .choice:active { transform: none; }
-.choice:focus-visible, .primary:focus-visible, .ghost:focus-visible, .copy:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.choice:focus-visible, .primary:focus-visible, .ghost:focus-visible, .copy:focus-visible, .start-btn:focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
 
-.primary { display: block; width: 100%; padding: 17px 18px; border-radius: 999px; border: 0; background: var(--accent); color: var(--accent-ink); font: inherit; font-size: 16px; font-weight: 700; letter-spacing: .06em; text-align: center; text-decoration: none; cursor: pointer; box-shadow: var(--shadow); }
+.primary { display: block; width: 100%; padding: 17px 18px; border-radius: 999px; border: 0; background: var(--grad); color: #fff; font: inherit; font-size: 16px; font-weight: 700; letter-spacing: .06em; text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 10px 24px rgba(165, 105, 88, .3), inset 0 1px 0 rgba(255, 255, 255, .4); }
 .ghost { background: none; border: 0; color: var(--muted); font: inherit; font-size: 14px; padding: 10px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
 
 .progress { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
 .progress .num { font-family: var(--num); font-size: 34px; line-height: 1; color: var(--fg); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
 .progress .num i { font-style: italic; color: var(--muted); font-size: 18px; margin-left: 4px; }
-.progress .phase { font-family: var(--num); font-size: 12px; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; }
+.progress .phase { font-family: var(--num); font-size: 12px; letter-spacing: .22em; color: var(--rose-deep); text-transform: uppercase; }
 .bar { height: 2px; background: var(--line); margin-bottom: 26px; overflow: hidden; }
-.bar > i { display: block; height: 100%; background: var(--gold); width: 0; transition: width .3s ease; }
+.bar > i { display: block; height: 100%; background: var(--rose); width: 0; transition: width .3s ease; }
 
 .result-hero { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 28px 22px 22px; box-shadow: var(--shadow); }
 .result-hero .type { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1.3; margin: 0 0 6px; letter-spacing: .02em; }
@@ -86,33 +99,96 @@ p { margin: 0 0 12px; }
 .section:first-of-type { border-top: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 10px; }
 .chip { font-size: 13px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
-.chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 500; }
-.today { background: var(--accent); color: var(--accent-ink); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
-.today h3 { color: var(--accent-ink); opacity: .75; }
+.chip.on { border-color: var(--rose); color: var(--rose-deep); background: var(--rose-soft); font-weight: 500; }
+.today { background: var(--grad); color: #fff; border-radius: 18px; padding: 24px 22px; box-shadow: 0 12px 28px rgba(165, 105, 88, .28); }
+.today h3 { color: #fff; opacity: .85; }
 .today p { margin: 0 0 10px; }
-.today .small { color: var(--accent-ink); opacity: .8; }
+.today .small { color: #fff; opacity: .85; }
 .warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
 .cta { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
 .cta .eyebrow { margin-bottom: 12px; }
-.paste { font-family: var(--body); background: var(--bg); border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.7; word-break: break-all; user-select: all; -webkit-user-select: all; }
+.paste { font-family: var(--body); background: var(--rose-soft); border: 1px dashed var(--rose); border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.7; word-break: break-all; user-select: all; -webkit-user-select: all; }
 .copyrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.copy { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+.copy { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--rose); background: transparent; color: var(--rose-deep); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
 .rules { font-size: 13px; color: var(--muted); padding-left: 18px; margin: 4px 0 0; line-height: 1.8; }
 footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
-@media (prefers-reduced-motion: reduce) { .screen { animation: none; } .bar > i, .choice { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .screen { animation: none; } .bar > i, .choice, .start-btn { transition: none; } }
 </style>
+</head>
+<body>
+
+<!-- 背景の光の粒（桜色の点を散らす）と、桜・葉の線画の部品 -->
+<svg class="dots" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="dots" width="360" height="360" patternUnits="userSpaceOnUse">
+      <g fill="currentColor">
+        <circle cx="22" cy="40" r="1.6" opacity=".55"/><circle cx="90" cy="18" r="1" opacity=".4"/><circle cx="140" cy="70" r="2" opacity=".5"/>
+        <circle cx="210" cy="30" r="1.2" opacity=".45"/><circle cx="300" cy="60" r="1.8" opacity=".5"/><circle cx="340" cy="120" r="1" opacity=".4"/>
+        <circle cx="60" cy="130" r="1.2" opacity=".45"/><circle cx="180" cy="150" r="1" opacity=".35"/><circle cx="250" cy="120" r="1.5" opacity=".5"/>
+        <circle cx="30" cy="220" r="2" opacity=".5"/><circle cx="110" cy="250" r="1.2" opacity=".4"/><circle cx="200" cy="230" r="1.8" opacity=".5"/>
+        <circle cx="290" cy="210" r="1" opacity=".4"/><circle cx="330" cy="290" r="1.6" opacity=".5"/><circle cx="80" cy="320" r="1" opacity=".4"/>
+        <circle cx="170" cy="330" r="1.4" opacity=".45"/><circle cx="240" cy="300" r="1" opacity=".35"/><circle cx="20" cy="300" r="1.2" opacity=".4"/>
+      </g>
+    </pattern>
+    <symbol id="sakura" viewBox="-50 -50 100 100">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+        <path id="petal" d="M0,-7 C-12,-15 -21,-31 -9,-43 L0,-37 L9,-43 C21,-31 12,-15 0,-7 Z"/>
+        <use href="#petal" transform="rotate(72)"/><use href="#petal" transform="rotate(144)"/><use href="#petal" transform="rotate(216)"/><use href="#petal" transform="rotate(288)"/>
+        <circle r="2.4"/>
+        <path d="M0,-7 L0,-16 M6.7,-2.2 L15.2,-4.9 M4.1,5.7 L9.4,13 M-4.1,5.7 L-9.4,13 M-6.7,-2.2 L-15.2,-4.9"/>
+      </g>
+    </symbol>
+    <symbol id="sprig" viewBox="0 0 100 120">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M52,118 C50,92 46,62 32,22"/>
+        <path d="M48,96 C38,93 28,97 22,105 C32,107 42,103 48,96 Z"/>
+        <path d="M45,76 C35,71 25,73 17,81 C27,85 38,83 45,76 Z"/>
+        <path d="M41,56 C31,49 21,51 13,57 C23,63 34,62 41,56 Z"/>
+        <path d="M49,88 C57,82 68,84 74,92 C64,96 54,94 49,88 Z"/>
+        <path d="M45,67 C53,59 64,59 72,65 C62,71 52,71 45,67 Z"/>
+        <path d="M38,45 C45,37 55,35 63,39 C55,47 45,49 38,45 Z"/>
+      </g>
+    </symbol>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#dots)"/>
+</svg>
 
 <main class="wrap">
-  <header class="brand"><span class="name">腸リバース研究室</span><span class="sub">Type Check</span></header>
+  <header class="brand" id="brand" hidden><span class="name">腸リバース研究室</span><span class="sub">Body Sign Check</span></header>
 
-  <section id="faces" class="screen stack">
+  <section id="start" class="screen start">
+    <svg class="deco tl" aria-hidden="true"><use href="#sakura"/></svg>
+    <svg class="deco tr" aria-hidden="true"><use href="#sprig"/></svg>
+    <svg class="deco bl" aria-hidden="true"><use href="#sprig"/></svg>
+    <svg class="deco br" aria-hidden="true"><use href="#sakura"/></svg>
+    <p class="eyebrow big" id="s_eyebrow">Body Sign Check</p>
+    <svg class="flourish" viewBox="0 0 220 30" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M104,15 l6,-6 l6,6 l-6,6 z"/>
+        <path d="M96,15 C80,15 76,4 62,8 C50,12 48,22 34,18 C22,15 16,10 4,15"/>
+        <path d="M124,15 C140,15 144,4 158,8 C170,12 172,22 186,18 C198,15 204,10 216,15"/>
+        <path d="M62,8 C58,1 49,1 46,7 C50,12 58,12 62,8 Z"/>
+        <path d="M158,8 C162,1 171,1 174,7 C170,12 162,12 158,8 Z"/>
+        <circle cx="34" cy="18" r="1.2" fill="currentColor"/><circle cx="186" cy="18" r="1.2" fill="currentColor"/>
+      </g>
+    </svg>
+    <h1 class="hero-title" id="s_title">体のサインチェック</h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub" id="s_sub">いま出ている体のサインから、あなたの型を知る</p>
+    <div class="medal"><img src="assets/medallion.png" alt="" width="526" height="526"></div>
+    <button class="start-btn" id="s_btn" type="button">START</button>
+    <p class="hero-meta"><span id="s_time">所要時間 2分</span><br><span id="s_count">全8問</span></p>
+    <p class="hero-by" id="s_by">若すぎ先生・腸リバース研究室</p>
+  </section>
+
+  <section id="faces" class="screen stack" hidden>
     <div>
-      <p class="eyebrow">Body Signal Check</p>
-      <h1 id="f_title">体のサインチェック</h1>
+      <p class="eyebrow">Step 1</p>
+      <h1 id="f_question">どの症状でお悩みですか？</h1>
       <p class="lead" id="f_lead">読み込み中です。</p>
     </div>
-    <h2 id="f_question"></h2>
     <div class="stack" id="f_list"></div>
+    <button class="ghost" id="f_back" type="button">最初に戻る</button>
     <p class="small" id="f_byline"></p>
   </section>
 
@@ -126,28 +202,18 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <a class="primary" id="d_btn" href="#" target="_blank" rel="noopener"></a>
       <p class="small" id="d_under"></p>
     </div>
-    <button class="ghost" id="d_back" type="button">最初に戻る</button>
+    <button class="ghost" id="d_back" type="button">症状の一覧に戻る</button>
     <footer id="d_footer"></footer>
   </section>
 
-  <section id="intro" class="screen stack" hidden>
-    <div>
-      <p class="eyebrow" id="i_eyebrow">8 questions</p>
-      <h1 id="title"></h1>
-      <p class="lead" id="lead"></p>
-    </div>
-    <button class="primary" id="start" type="button">はじめる</button>
-    <p class="small">答えは、この画面の中だけで使います。どこにも送りません。</p>
-    <button class="ghost" id="i_back" type="button">最初に戻る</button>
-    <p class="small" id="byline"></p>
-  </section>
-
   <section id="quiz" class="screen" hidden>
+    <p class="eyebrow" id="q_face"></p>
     <div class="progress"><span class="num" id="pnum">01<i>/ 08</i></span><span class="phase" id="phase"></span></div>
     <div class="bar"><i id="pbar"></i></div>
     <h2 id="qtext"></h2>
     <div class="stack" id="choices"></div>
     <button class="ghost" id="back" type="button">1つ戻る</button>
+    <p class="small" id="q_note"></p>
   </section>
 
   <section id="result" class="screen stack" hidden>
@@ -189,22 +255,24 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var F = null;      // 面の一覧
+  var F = null;      // 面の一覧とトップ画面の文言
   var C = null;      // いま選んだ面の設定
   var answers = {};
   var step = 0;
   var all = [];      // questions + hearing をつなげた8問
   var MARKS = ["A", "B", "C", "D", "E", "F"];
+  var SCREENS = ["start", "faces", "direct", "quiz", "result"];
 
   function text(id, s) { $(id).textContent = s || ""; }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
   function show(id) {
-    ["faces", "direct", "intro", "quiz", "result"].forEach(function (k) {
+    SCREENS.forEach(function (k) {
       var el = $(k);
       var on = (k === id);
       el.hidden = !on;
       if (on) { el.classList.remove("screen"); void el.offsetWidth; el.classList.add("screen"); }
     });
+    $("brand").hidden = (id === "start");
     window.scrollTo(0, 0);
   }
 
@@ -230,8 +298,19 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     return b;
   }
 
+  function showStart() {
+    var s = F.start || {};
+    text("s_eyebrow", s.eyebrow || "Body Sign Check");
+    text("s_title", s.title || F.title);
+    text("s_sub", s.sub);
+    text("s_btn", s.button || "START");
+    text("s_time", s.time); text("s_count", s.count);
+    text("s_by", s.byline || F.byline);
+    show("start");
+  }
+
   function showFaces() {
-    text("f_byline", F.byline); text("f_title", F.title); text("f_question", F.question); text("f_lead", F.lead);
+    text("f_byline", F.byline); text("f_question", F.question); text("f_lead", F.lead);
     var box = $("f_list"); box.innerHTML = "";
     F.faces.forEach(function (f, i) {
       box.appendChild(choiceButton("face_" + f.key, f.label, f.sub, MARKS[i], function () { pickFace(f.key); }));
@@ -247,15 +326,15 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     show("direct");
   }
 
+  // 症状を選んだら、そのまま1問目へ（途中の画面は挟まない）
   function pickFace(key) {
     window.TYPECHECK = null;
     load("types/" + key + ".js", function () {
       C = window.TYPECHECK;
       if (!C) { showDirect(); return; }
       all = (C.questions || []).concat(C.hearing || []);
-      text("byline", F.byline); text("title", C.title); text("lead", C.lead); text("start", C.startLabel || "はじめる");
-      text("i_eyebrow", all.length + " questions");
-      show("intro");
+      answers = {}; step = 0;
+      showQuestion();
     }, showDirect);
   }
 
@@ -263,10 +342,12 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     var q = all[step];
     var n = all.length;
     var nq = (C.questions || []).length;
+    text("q_face", C.title);
     $("pnum").innerHTML = pad(step + 1) + "<i>/ " + pad(n) + "</i>";
     $("pbar").style.width = Math.round(step / n * 100) + "%";
     text("phase", step < nq ? "Your type" : "Your first note");
     text("qtext", q.text);
+    text("q_note", step === 0 ? (C.note || "答えは、この画面の中だけで使います。どこにも送りません。") : "");
     $("back").hidden = step === 0;
     var box = $("choices"); box.innerHTML = "";
     q.choices.forEach(function (c, i) {
@@ -332,19 +413,21 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   }
 
   function bind() {
-    $("start").addEventListener("click", function () { answers = {}; step = 0; showQuestion(); });
+    $("s_btn").addEventListener("click", showFaces);
+    $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
-    $("i_back").addEventListener("click", showFaces);
     $("d_back").addEventListener("click", showFaces);
     $("copybtn").addEventListener("click", copyLine);
   }
 
   load("types/index.js", function () {
     F = window.TYPECHECK_FACES;
-    if (!F) { text("f_lead", "設定が読み込めませんでした。"); return; }
+    if (!F) { text("s_sub", "設定が読み込めませんでした。"); return; }
     bind();
-    showFaces();
-  }, function () { text("f_lead", "設定が読み込めませんでした。"); });
+    showStart();
+  }, function () { text("s_sub", "設定が読み込めませんでした。"); });
 })();
 </script>
+</body>
+</html>
