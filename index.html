@@ -262,6 +262,22 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   var all = [];      // questions + hearing をつなげた8問
   var MARKS = ["A", "B", "C", "D", "E", "F"];
   var SCREENS = ["start", "faces", "direct", "quiz", "result"];
+  var lastType = "";   // いま出ている結果の型名（計測用）
+  var TRACK = false;   // 計測が動いているか
+
+  // 計測（Umami）。答えの中身は送らない。押した回数と、面と型の名前だけ。公開サイトでだけ動く
+  function initAnalytics(cfg) {
+    if (!cfg || !cfg.umami || !/github\.io$/.test(location.hostname)) return;
+    var s = document.createElement("script");
+    s.defer = true; s.src = "https://cloud.umami.is/script.js";
+    s.setAttribute("data-website-id", cfg.umami);
+    document.head.appendChild(s);
+    TRACK = true;
+  }
+  function track(name, data) {
+    if (!TRACK) return;
+    try { if (window.umami && window.umami.track) window.umami.track(name, data || {}); } catch (e) {}
+  }
 
   function text(id, s) { $(id).textContent = s || ""; }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
@@ -323,6 +339,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("d_title", F.other.title); text("d_body", F.other.body);
     var a = $("d_btn"); a.textContent = F.other.button; a.href = F.other.url;
     text("d_under", F.other.under); text("d_footer", F.footer);
+    track("direct");
     show("direct");
   }
 
@@ -334,6 +351,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       if (!C) { showDirect(); return; }
       all = (C.questions || []).concat(C.hearing || []);
       answers = {}; step = 0;
+      track("face", { face: key });
       showQuestion();
     }, showDirect);
   }
@@ -347,7 +365,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     $("pbar").style.width = Math.round(step / n * 100) + "%";
     text("phase", step < nq ? "Your type" : "Your first note");
     text("qtext", q.text);
-    text("q_note", step === 0 ? (C.note || "答えは、この画面の中だけで使います。どこにも送りません。") : "");
+    text("q_note", step === 0 ? (C.note || (TRACK ? "答えの中身は、どこにも送りません。押した回数だけ数えています。" : "答えは、この画面の中だけで使います。どこにも送りません。")) : "");
     $("back").hidden = step === 0;
     var box = $("choices"); box.innerHTML = "";
     q.choices.forEach(function (c, i) {
@@ -373,6 +391,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   function showResult() {
     var k = C.decide(answers);
     var r = C.results[k] || C.results.none;
+    lastType = r.name;
+    track("result", { face: C.key, type: r.name });
     text("rname", r.name); text("rtag", r.tag); text("rwhy", r.why);
     text("rrisk", r.risk); $("risksec").hidden = !r.risk;
     text("rtoday", r.today); text("rtip", r.tip); $("rtip").hidden = !r.tip;
@@ -416,6 +436,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   // 「オプチャで相談してみる」＝1行をコピーしてから、そのままLINEを開く（タップ1回）
   function consult() {
     var t = $("paste").textContent;
+    track("consult", { face: C ? C.key : "", type: lastType });
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).then(function () { text("copied", "1行をコピーしました。部屋の報告のスレッドに貼ってください"); })
         .catch(function () { text("copied", "コピーできなかったので、左の「1行をコピーだけする」を押してください"); });
@@ -423,7 +444,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   }
 
   function bind() {
-    $("s_btn").addEventListener("click", showFaces);
+    $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
+    $("d_btn").addEventListener("click", function () { track("consult", { face: "other", type: "" }); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
@@ -435,6 +457,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   load("types/index.js", function () {
     F = window.TYPECHECK_FACES;
     if (!F) { text("s_sub", "設定が読み込めませんでした。"); return; }
+    initAnalytics(F.analytics);
     bind();
     showStart();
   }, function () { text("s_sub", "設定が読み込めませんでした。"); });
