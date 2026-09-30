@@ -376,10 +376,11 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("rname", r.name); text("rtag", r.tag); text("rwhy", r.why);
     text("rrisk", r.risk); $("risksec").hidden = !r.risk;
     text("rtoday", r.today); text("rtip", r.tip); $("rtip").hidden = !r.tip;
-    text("rchapter", C.cta.note ? C.cta.note.replace("{chapter}", r.chapter) : ("部屋のnoteでは、" + r.chapter + "から読んでください。"));
+    var chap = C.cta.note ? C.cta.note.replace("{chapter}", r.chapter || "") : (r.chapter ? ("部屋のnoteでは、" + r.chapter + "から読んでください。") : "");
+    text("rchapter", chap); $("rchapter").hidden = !chap;
     var flags = C.flags(answers);
     var chips = $("chips"); chips.innerHTML = "";
-    ["材料", "合図", "出し方"].forEach(function (name) {
+    (C.axes || ["材料", "合図", "出し方"]).forEach(function (name) {
       var s = document.createElement("span");
       var on = flags.indexOf(name) >= 0;
       s.className = "chip" + (on ? " on" : ""); s.textContent = (on ? "✓ " : "") + name;
