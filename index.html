@@ -244,7 +244,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <p id="ctalead"></p>
       <p id="ctahow"></p>
       <div class="gift">
-        <h3>部屋で受け取れる物</h3>
+        <h3>あなたの型の2週間表</h3>
         <p id="giftlead"></p>
         <div class="preview" aria-hidden="true">
           <div class="prow"><span class="pn">1</span><i style="width:78%"></i></div>
@@ -430,8 +430,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     var ex = C.extra ? C.extra(answers) : ""; text("rextra", ex); $("rextra").hidden = !ex;
     text("ctalead", C.cta.lead); text("ctahow", C.cta.how);
     var fl = ""; (F.faces || []).forEach(function (f) { if (f.key === C.key) fl = f.label; });
-    text("giftlead", "あなたの型（" + r.name + "）の2週間表。1日ずつ、やることが書いてあります。部屋の中だけで配っています。");
-    text("giftroute", "入ったら、いちばん上のアナウンスの「型別の2週間表」→「" + fl + "」→「" + r.name + "」で開きます。");
+    text("giftlead", r.name + "の14日ぶんを、1日ずつ書いた表です。部屋に置いてあります。");
+    text("giftroute", "いちばん上のアナウンスの「型別の2週間表」→「" + fl + "」→「" + r.name + "」で開きます。");
     text("pastetitle", C.cta.pasteTitle || "部屋に貼る1行");
     var line = C.summary ? C.summary(answers, r.name, hearingLabels()) : ("【" + C.title + "】" + r.name);
     text("paste", line); text("copied", "");
