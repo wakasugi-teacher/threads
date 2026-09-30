@@ -27,7 +27,8 @@ window.TYPECHECK_FACES = {
     { key: "benpi", label: "便秘", sub: "出ない、硬い、残る、いきむ" },
     { key: "kettou", label: "血糖が高め", sub: "健診で言われた、食後に眠い、甘い物が止まらない" },
     { key: "hari", label: "お腹の張り・ガス", sub: "夕方パンパン、おなら、におい" },
-    { key: "onaka", label: "お腹まわり・脂肪肝", sub: "ぽっこり、痩せない、健診の中性脂肪や肝臓の数字" }
+    { key: "onaka", label: "お腹まわり・脂肪肝", sub: "ぽっこり、痩せない、健診の中性脂肪や肝臓の数字" },
+    { key: "ketsuatsu", label: "血圧が高め", sub: "健診で言われた、減塩しても下がらない、薬を増やしたくない" }
   ],
   other: {
     label: "どれにも当てはまらない、別の悩み",
