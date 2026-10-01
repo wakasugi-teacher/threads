@@ -450,6 +450,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     $("pbar").style.width = "100%";
     show("result");
     $("stickybar").hidden = false;
+    setTimeout(function () { var r = $("ctabtn").getBoundingClientRect(); $("stickybar").hidden = (r.top < window.innerHeight && r.bottom > 0); }, 50);
   }
 
   function copyLine() {
@@ -495,7 +496,15 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     $("ctabtn").addEventListener("pointerdown", function () { consultTrack(C ? C.key : "", lastType); });
     $("stickybtn").addEventListener("click", consult);
     $("stickybtn").addEventListener("pointerdown", function () { consultTrack(C ? C.key : "", lastType); });
-    // 結果画面：本物のボタンが画面に入ったら、下の固定ボタンは隠す
+    // 結果画面：本物のボタンが画面に入ったら、下の固定ボタンは隠す（スクロール判定が本線・IntersectionObserverは補助）
+    function syncSticky() {
+      if ($("result").hidden) { $("stickybar").hidden = true; return; }
+      var r = $("ctabtn").getBoundingClientRect();
+      var inView = r.top < window.innerHeight && r.bottom > 0;
+      $("stickybar").hidden = inView;
+    }
+    window.addEventListener("scroll", syncSticky, { passive: true });
+    window.addEventListener("resize", syncSticky);
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (es) {
         var onScreen = es[0] && es[0].isIntersecting;
