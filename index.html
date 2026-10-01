@@ -118,6 +118,10 @@ p { margin: 0 0 12px; }
 .copyrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .copy { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--rose); background: transparent; color: var(--rose-deep); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
 .rules { font-size: 13px; color: var(--muted); padding-left: 18px; margin: 4px 0 0; line-height: 1.8; }
+.stickybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, rgba(251, 241, 238, .98) 70%, rgba(251, 241, 238, 0)); }
+.stickybar .primary { margin: 0 auto; max-width: 420px; }
+.stickybar[hidden] { display: none !important; }
+#result { padding-bottom: 96px; }
 footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
 @media (prefers-reduced-motion: reduce) { .screen { animation: none; } .bar > i, .choice, .start-btn { transition: none; } }
 </style>
@@ -271,6 +275,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     <footer id="footer"></footer>
   </section>
 </main>
+<div class="stickybar" id="stickybar" hidden><a class="primary" id="stickybtn" href="#" target="_blank" rel="noopener"></a></div>
 
 <script>
 (function () {
@@ -309,6 +314,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       if (on) { el.classList.remove("screen"); void el.offsetWidth; el.classList.add("screen"); }
     });
     $("brand").hidden = (id === "start");
+    if (id !== "result") { $("stickybar").hidden = true; }
     window.scrollTo(0, 0);
   }
 
@@ -436,12 +442,14 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     var line = C.summary ? C.summary(answers, r.name, hearingLabels()) : ("【" + C.title + "】" + r.name);
     text("paste", line); text("copied", "");
     var a = $("ctabtn"); a.textContent = C.cta.button; a.href = C.cta.url;
+    var sb = $("stickybtn"); sb.textContent = C.cta.button; sb.href = C.cta.url;
     text("ctaunder", C.cta.under);
     var ul = $("rules"); ul.innerHTML = "";
     (C.rules || []).forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
     text("footer", F.footer);
     $("pbar").style.width = "100%";
     show("result");
+    $("stickybar").hidden = false;
   }
 
   function copyLine() {
@@ -456,10 +464,18 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     } else { fallback(); }
   }
 
+  // consult の計測は pointerdown と click の両方で呼ぶ（LINEへ飛ぶ前に送信が終わるように）。1.5秒以内の重複は1回に数える
+  var lastConsultAt = 0;
+  function consultTrack(face, type) {
+    var now = Date.now();
+    if (now - lastConsultAt < 1500) return;
+    lastConsultAt = now;
+    track("consult", { face: face, type: type });
+  }
   // 「オプチャで相談してみる」＝1行をコピーしてから、そのままLINEを開く（タップ1回）
   function consult() {
     var t = $("paste").textContent;
-    track("consult", { face: C ? C.key : "", type: lastType });
+    consultTrack(C ? C.key : "", lastType);
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).then(function () { text("copied", "1行をコピーしました。部屋の報告のスレッドに貼ってください"); })
         .catch(function () { text("copied", "コピーできなかったので、左の「1行をコピーだけする」を押してください"); });
@@ -468,13 +484,25 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
 
   function bind() {
     $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
-    $("d_btn").addEventListener("click", function () { track("consult", { face: "other", type: "" }); });
+    $("d_btn").addEventListener("click", function () { consultTrack("other", ""); });
+    $("d_btn").addEventListener("pointerdown", function () { consultTrack("other", ""); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
     $("d_back").addEventListener("click", showFaces);
     $("copybtn").addEventListener("click", copyLine);
     $("ctabtn").addEventListener("click", consult);
+    $("ctabtn").addEventListener("pointerdown", function () { consultTrack(C ? C.key : "", lastType); });
+    $("stickybtn").addEventListener("click", consult);
+    $("stickybtn").addEventListener("pointerdown", function () { consultTrack(C ? C.key : "", lastType); });
+    // 結果画面：本物のボタンが画面に入ったら、下の固定ボタンは隠す
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (es) {
+        var onScreen = es[0] && es[0].isIntersecting;
+        $("stickybar").hidden = !!onScreen || $("result").hidden;
+      }, { threshold: 0.25 });
+      io.observe($("ctabtn"));
+    }
   }
 
   load("types/index.js", function () {
