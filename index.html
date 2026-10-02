@@ -275,8 +275,9 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       </div>
       <h3 id="pastetitle"></h3>
       <div class="paste" id="paste"></div>
-      <a class="primary" id="ctabtn" href="#" target="_blank" rel="noopener"></a>
+      <a class="primary" id="ctabtn" href="#" rel="noopener"></a>
       <p class="small" id="ctaunder"></p>
+      <p class="small">押しても開かないときは、このリンクを長押しして「LINEで開く」を選んでください：<a id="rawlink" href="#" rel="noopener">腸リバース研究室（LINE）</a></p>
       <p class="small">LINEが開いたら、「参加」→名前を決める（本名でなくて大丈夫です）→いちばん上の投稿の「スレッド内メッセージを見る」に、コピーした1行を貼る。この3つで届きます。</p>
       <div class="copyrow"><button class="copy" id="copybtn" type="button">1行をコピーだけする</button><span class="small" id="copied"></span></div>
       <p class="small" id="rchapter"></p>
@@ -289,7 +290,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     <footer id="footer"></footer>
   </section>
 </main>
-<div class="stickybar" id="stickybar" hidden><a class="primary" id="stickybtn" href="#" target="_blank" rel="noopener"></a></div>
+<div class="stickybar" id="stickybar" hidden><a class="primary" id="stickybtn" href="#" rel="noopener"></a></div>
 
 <script>
 (function () {
@@ -458,6 +459,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("paste", line); text("copied", "");
     var a = $("ctabtn"); a.textContent = C.cta.button; a.href = C.cta.url;
     var sb = $("stickybtn"); sb.textContent = C.cta.button; sb.href = C.cta.url;
+    $("rawlink").href = C.cta.url;
     text("ctaunder", C.cta.under);
     var ul = $("rules"); ul.innerHTML = "";
     (C.rules || []).forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
@@ -489,13 +491,17 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     track("consult", { face: face, type: type });
   }
   // 「オプチャで相談してみる」＝1行をコピーしてから、そのままLINEを開く（タップ1回）
-  function consult() {
+  function consult(e) {
+    // 10/2夜 先生「やたら連打してる奴いる」＝新しいタブ（target=_blank）がThreadsのアプリ内ブラウザで開かず、押しても何も起きない人がいるとみて、同じ画面でLINEのリンクへ移動する形に
+    if (e && e.preventDefault) e.preventDefault();
     var t = $("paste").textContent;
+    var url = (C && C.cta && C.cta.url) || $("ctabtn").href;
     consultTrack(C ? C.key : "", lastType);
+    text("copied", "1行をコピーしました。LINEを開いています…");
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(t).then(function () { text("copied", "1行をコピーしました。部屋の報告のスレッドに貼ってください"); })
-        .catch(function () { text("copied", "コピーできなかったので、左の「1行をコピーだけする」を押してください"); });
+      navigator.clipboard.writeText(t).catch(function () {});
     }
+    setTimeout(function () { window.location.href = url; }, 250);
   }
 
   function bind() {
