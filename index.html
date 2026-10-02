@@ -277,6 +277,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <div class="paste" id="paste"></div>
       <a class="primary" id="ctabtn" href="#" target="_blank" rel="noopener"></a>
       <p class="small" id="ctaunder"></p>
+      <p class="small">LINEが開いたら、「参加」→名前を決める（本名でなくて大丈夫です）→いちばん上の投稿の「スレッド内メッセージを見る」に、コピーした1行を貼る。この3つで届きます。</p>
       <div class="copyrow"><button class="copy" id="copybtn" type="button">1行をコピーだけする</button><span class="small" id="copied"></span></div>
       <p class="small" id="rchapter"></p>
     </div>
@@ -500,16 +501,13 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   function bind() {
     $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
     $("d_btn").addEventListener("click", function () { consultTrack("other", ""); });
-    $("d_btn").addEventListener("pointerdown", function () { consultTrack("other", ""); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
     $("d_back").addEventListener("click", showFaces);
     $("copybtn").addEventListener("click", copyLine);
     $("ctabtn").addEventListener("click", consult);
-    $("ctabtn").addEventListener("pointerdown", function () { consultTrack(C ? C.key : "", lastType); });
     $("stickybtn").addEventListener("click", consult);
-    $("stickybtn").addEventListener("pointerdown", function () { consultTrack(C ? C.key : "", lastType); });
     // 結果画面：本物のボタンが画面に入ったら、下の固定ボタンは隠す（スクロール判定が本線・IntersectionObserverは補助）
     function syncSticky() {
       if ($("result").hidden) { $("stickybar").hidden = true; return; }
