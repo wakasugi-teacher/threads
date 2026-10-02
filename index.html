@@ -104,6 +104,11 @@ p { margin: 0 0 12px; }
 .today h3 { color: #fff; opacity: .85; }
 .today p { margin: 0 0 10px; }
 .today .small { color: #fff; opacity: .85; }
+.sell { background: var(--paper); border: 1px solid var(--rose); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
+.sell .sell-title { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: .04em; margin: 0 0 10px; color: var(--rose-deep); }
+.sell p { margin: 0 0 12px; line-height: 1.85; }
+.sell p:last-child { margin-bottom: 0; }
+.cta .cta-title { font-family: var(--display); font-weight: 600; font-size: 22px; margin: 0 0 6px; line-height: 1.4; }
 .warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
 .cta { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
 .cta .eyebrow { margin-bottom: 12px; }
@@ -237,14 +242,23 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <div class="section"><h3>当てはまった場所</h3><div class="chips" id="chips"></div><p class="small">2つ以上当てはまる人がほとんどで、それが普通です。上の型は、その中の重点です。</p></div>
     </div>
     <div class="today">
-      <h3>きょうやること</h3>
-      <p id="rtoday"></p>
-      <p class="small" id="rtip"></p>
+      <h3>最初の1手の、入口だけ</h3>
+      <p id="rtaste"></p>
+      <p class="small">ここまでが試食です。量・時刻・順番は、人で違うので、下で1人ずつ渡しています。</p>
     </div>
     <div class="warn" id="redflag"></div>
     <p id="rextra" class="small"></p>
+    <div class="sell">
+      <p class="eyebrow">この型を戻す手法</p>
+      <h3 class="sell-title">腸リバース</h3>
+      <p>年齢史上最高の体を、腸から作っていく手法です。薬も我慢も足さずに、毎日のどれだけ・どの順番を、腸の時計に合わせて決めます。</p>
+      <p id="rpromise"></p>
+      <p>研究室では、便秘が改善した、昼の眠気が消えた、朝までトイレで起きなくなった、という報告が毎晩上がっています。約200人の研究員が、1人ずつ自分の型で記録しています。</p>
+      <p class="small">診断と薬は病院の仕事です。毎日のどれだけ・どの順番は、僕が調べて確かめた物だけでお渡しします。</p>
+    </div>
     <div class="cta stack">
       <p class="eyebrow">Next step</p>
+      <h3 class="cta-title">あなたの型の、最初の1手を受け取る</h3>
       <p id="ctalead"></p>
       <p id="ctahow"></p>
       <div class="gift">
@@ -421,7 +435,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     track("result", { face: C.key, type: r.name });
     text("rname", r.name); text("rtag", r.tag); text("rwhy", r.why);
     text("rrisk", r.risk); $("risksec").hidden = !r.risk;
-    text("rtoday", r.today); text("rtip", r.tip); $("rtip").hidden = !r.tip;
+    text("rtaste", r.taste || r.today);   // 10/2 先生「試食は少しだけ」＝today（やる量）はページに出さず、入口の1行だけ
+    text("rpromise", C.cta.promise || "");
     var chap = C.cta.note ? C.cta.note.replace("{chapter}", r.chapter || "") : (r.chapter ? ("部屋のnoteでは、" + r.chapter + "から読んでください。") : "");
     text("rchapter", chap); $("rchapter").hidden = !chap;
     var flags = C.flags(answers);
