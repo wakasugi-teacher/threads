@@ -215,7 +215,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     </div>
     <div class="cta stack">
       <p id="d_body"></p>
-      <a class="primary" id="d_btn" href="#" target="_blank" rel="noopener"></a>
+      <a class="primary" id="d_btn" href="#" rel="noopener"></a>
       <p class="small" id="d_under"></p>
     </div>
     <button class="ghost" id="d_back" type="button">症状の一覧に戻る</button>
@@ -506,7 +506,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
 
   function bind() {
     $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
-    $("d_btn").addEventListener("click", function () { consultTrack("other", ""); });
+    $("d_btn").addEventListener("click", function (e) { e.preventDefault(); consultTrack("other", ""); var u = $("d_btn").href; setTimeout(function () { window.location.href = u; }, 150); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
