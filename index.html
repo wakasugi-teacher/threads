@@ -108,13 +108,16 @@ p { margin: 0 0 12px; }
 .sell .sell-title { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: .04em; margin: 0 0 10px; color: var(--rose-deep); }
 .sell p { margin: 0 0 12px; line-height: 1.85; }
 .sell p:last-child { margin-bottom: 0; }
-.voices { margin: 18px 0 0; }
+.voices { margin: 18px 0 0; background: var(--rose-soft); border: 1px solid var(--rose); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
+.voices .voices-title { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: .04em; line-height: 1.3; margin: 0 0 8px; color: var(--rose-deep); text-transform: none; }
+.voices .voices-lead { margin: 0 0 16px; line-height: 1.8; }
+.voices .vlabel { font-size: 15px; font-weight: 700; color: var(--rose-deep); margin: 18px 0 10px; padding-left: 10px; border-left: 3px solid var(--rose); line-height: 1.4; }
+.voices .vlabel[hidden] { display: none !important; }
 .voices .vgrid { display: grid; gap: 12px; }
 .voices figure { margin: 0; }
-.voices img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; border-radius: 14px; border: 1px solid var(--rose-soft); background: #fff; cursor: zoom-in; }
+.voices img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; border-radius: 14px; border: 1px solid var(--rose); background: #fff; cursor: zoom-in; box-shadow: 0 2px 10px rgba(166,112,94,.12); }
 .voices figcaption { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 6px 2px 0; }
-.voices .small { margin-top: 10px; }
-.voices .vsub { margin-top: 18px; }
+.voices .small { margin-top: 14px; }
 #vzoom { position: fixed; inset: 0; z-index: 60; background: rgba(20, 10, 8, .88); overflow: auto; padding: 24px 12px; -webkit-overflow-scrolling: touch; }
 #vzoom[hidden] { display: none !important; }
 #vzoom img { display: block; margin: 0 auto; border-radius: 10px; background: #fff; }
@@ -267,9 +270,12 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <p class="small">診断と薬は病院の仕事です。毎日のどれだけ・どの順番は、僕が調べて確かめた物だけでお渡しします。</p>
     </div>
     <div class="voices" id="voices" hidden>
-      <p class="eyebrow">この型で、部屋で起きたこと</p>
+      <p class="eyebrow">Real reports</p>
+      <h3 class="voices-title">僕の研究室で、<br>起きたこと</h3>
+      <p class="voices-lead">研究員が毎晩書いている報告の画面です。作った物はひとつもありません。</p>
+      <p class="vlabel" id="vfacehead">この型の人に、起きたこと</p>
       <div class="vgrid" id="rvoices"></div>
-      <p class="eyebrow vsub" id="vcommonhead">型はちがっても、腸から変わった人</p>
+      <p class="vlabel" id="vcommonhead">型はちがっても、腸から変わった人</p>
       <div class="vgrid" id="rvoices2"></div>
       <p class="small">研究室の報告の画面そのままです。名前とアイコンだけ伏せて、文字は変えていません。赤い線が、起きたこと。黒く塗った所が、やり方です。本当かどうかは、部屋に入って確かめてください。タップで大きくなります。</p>
     </div>
@@ -316,7 +322,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   var $ = function (id) { return document.getElementById(id); };
   var F = null;      // 面の一覧とトップ画面の文言
   // 部屋の報告のスクショ（10/4・名前とアイコンだけ伏せた画面。文字は変えない）。面ごとに1〜3枚＋全部の面に出す1枚
-  var VOICES_VER = "?v=20261004c";   // 画像を差し替えたらここを変える（ブラウザのキャッシュ対策）
+  var VOICES_VER = "?v=20261004d";   // 画像を差し替えたらここを変える（ブラウザのキャッシュ対策）
   var VOICES = {
     benpi: [{ src: "img/voices/benpi_1.png", cap: "足の台で、魔法にかかったみたいに早く出た（9月）" },
             { src: "img/voices/benpi_2.png", cap: "元々2日に1回だった人が、毎日出るように（9月）" },
@@ -344,6 +350,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     }
     var n1 = fill("rvoices", VOICES[face] || []);
     var n2 = fill("rvoices2", VOICES.common || []);
+    $("vfacehead").hidden = n1 === 0; $("rvoices").hidden = n1 === 0;
     $("vcommonhead").hidden = n2 === 0; $("rvoices2").hidden = n2 === 0;
     $("voices").hidden = (n1 + n2) === 0;
   }
