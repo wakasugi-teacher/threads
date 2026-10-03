@@ -114,6 +114,7 @@ p { margin: 0 0 12px; }
 .voices img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; border-radius: 14px; border: 1px solid var(--rose-soft); background: #fff; cursor: zoom-in; }
 .voices figcaption { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 6px 2px 0; }
 .voices .small { margin-top: 10px; }
+.voices .vsub { margin-top: 18px; }
 #vzoom { position: fixed; inset: 0; z-index: 60; background: rgba(20, 10, 8, .88); overflow: auto; padding: 24px 12px; -webkit-overflow-scrolling: touch; }
 #vzoom[hidden] { display: none !important; }
 #vzoom img { display: block; margin: 0 auto; border-radius: 10px; background: #fff; }
@@ -268,6 +269,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     <div class="voices" id="voices" hidden>
       <p class="eyebrow">この型で、部屋で起きたこと</p>
       <div class="vgrid" id="rvoices"></div>
+      <p class="eyebrow vsub" id="vcommonhead">型はちがっても、腸から変わった人</p>
+      <div class="vgrid" id="rvoices2"></div>
       <p class="small">研究室の報告の画面そのままです。名前とアイコンだけ伏せて、文字は変えていません。赤い線が、起きたこと。黒く塗った所が、やり方です。本当かどうかは、部屋に入って確かめてください。タップで大きくなります。</p>
     </div>
     <div class="cta stack">
@@ -313,7 +316,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   var $ = function (id) { return document.getElementById(id); };
   var F = null;      // 面の一覧とトップ画面の文言
   // 部屋の報告のスクショ（10/4・名前とアイコンだけ伏せた画面。文字は変えない）。面ごとに1〜3枚＋全部の面に出す1枚
-  var VOICES_VER = "?v=20261004b";   // 画像を差し替えたらここを変える（ブラウザのキャッシュ対策）
+  var VOICES_VER = "?v=20261004c";   // 画像を差し替えたらここを変える（ブラウザのキャッシュ対策）
   var VOICES = {
     benpi: [{ src: "img/voices/benpi_1.png", cap: "足の台で、魔法にかかったみたいに早く出た（9月）" },
             { src: "img/voices/benpi_2.png", cap: "元々2日に1回だった人が、毎日出るように（9月）" },
@@ -324,19 +327,25 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
              { src: "img/voices/kettou_2.png", cap: "今日も睡魔ありませんでした（9月）" }],
     onaka: [{ src: "img/voices/onaka_1.png", cap: "毎晩ビール3本だった人が、5日ほとんど欲しくない（10月）" },
             { src: "img/voices/onaka_2.png", cap: "ポッコリカチカチだったお腹が、フニャフニャに（9月）" }],
-    common: [{ src: "img/voices/common_1.png", cap: "朝まで眠れたのは半年ぶり（10月）" }]
+    common: [{ src: "img/voices/common_1.png", cap: "朝まで眠れたのは半年ぶり（10月）" },
+             { src: "img/voices/common_2.png", cap: "夜中に目が覚めずに、朝まで眠れた（9月）" }]
   };
   function renderVoices(face) {
-    var list = (VOICES[face] || []).concat(VOICES.common || []);
-    var box = $("rvoices"); box.innerHTML = "";
-    list.forEach(function (v) {
-      var fg = document.createElement("figure");
-      var im = document.createElement("img"); im.src = v.src + VOICES_VER; im.alt = v.cap; im.loading = "lazy";
-      im.addEventListener("click", function () { openZoom(v.src + VOICES_VER, v.cap); });
-      var fc = document.createElement("figcaption"); fc.textContent = v.cap;
-      fg.appendChild(im); fg.appendChild(fc); box.appendChild(fg);
-    });
-    $("voices").hidden = list.length === 0;
+    function fill(boxId, list) {
+      var box = $(boxId); box.innerHTML = "";
+      list.forEach(function (v) {
+        var fg = document.createElement("figure");
+        var im = document.createElement("img"); im.src = v.src + VOICES_VER; im.alt = v.cap; im.loading = "lazy";
+        im.addEventListener("click", function () { openZoom(v.src + VOICES_VER, v.cap); });
+        var fc = document.createElement("figcaption"); fc.textContent = v.cap;
+        fg.appendChild(im); fg.appendChild(fc); box.appendChild(fg);
+      });
+      return list.length;
+    }
+    var n1 = fill("rvoices", VOICES[face] || []);
+    var n2 = fill("rvoices2", VOICES.common || []);
+    $("vcommonhead").hidden = n2 === 0; $("rvoices2").hidden = n2 === 0;
+    $("voices").hidden = (n1 + n2) === 0;
   }
   function openZoom(src, cap) {
     var z = $("vzoom"), im = $("vzoomimg");
