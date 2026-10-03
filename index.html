@@ -108,6 +108,16 @@ p { margin: 0 0 12px; }
 .sell .sell-title { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: .04em; margin: 0 0 10px; color: var(--rose-deep); }
 .sell p { margin: 0 0 12px; line-height: 1.85; }
 .sell p:last-child { margin-bottom: 0; }
+.voices { margin: 18px 0 0; }
+.voices .vgrid { display: grid; gap: 12px; }
+.voices figure { margin: 0; }
+.voices img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; border-radius: 14px; border: 1px solid var(--rose-soft); background: #fff; cursor: zoom-in; }
+.voices figcaption { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 6px 2px 0; }
+.voices .small { margin-top: 10px; }
+#vzoom { position: fixed; inset: 0; z-index: 60; background: rgba(20, 10, 8, .88); overflow: auto; padding: 24px 12px; -webkit-overflow-scrolling: touch; }
+#vzoom[hidden] { display: none !important; }
+#vzoom img { display: block; margin: 0 auto; border-radius: 10px; background: #fff; }
+#vzoom .vclose { position: fixed; top: 12px; right: 14px; color: #fff; font-size: 14px; letter-spacing: .1em; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.5); border-radius: 999px; padding: 6px 12px; }
 .cta .cta-title { font-family: var(--display); font-weight: 600; font-size: 22px; margin: 0 0 6px; line-height: 1.4; }
 .warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
 .cta { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
@@ -255,6 +265,11 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <p>研究室では、便秘が改善した、昼の眠気が消えた、朝までトイレで起きなくなった、という報告が毎晩上がっています。約200人の研究員が、1人ずつ自分の型で記録しています。</p>
       <p class="small">診断と薬は病院の仕事です。毎日のどれだけ・どの順番は、僕が調べて確かめた物だけでお渡しします。</p>
     </div>
+    <div class="voices" id="voices" hidden>
+      <p class="eyebrow">この型で、部屋で起きたこと</p>
+      <div class="vgrid" id="rvoices"></div>
+      <p class="small">研究室の報告の画面そのままです。名前とアイコンだけ伏せて、文字は変えていません。タップで大きくなります。</p>
+    </div>
     <div class="cta stack">
       <p class="eyebrow">Next step</p>
       <h3 class="cta-title">あなたの型の、最初の1手を受け取る</h3>
@@ -290,12 +305,47 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     <footer id="footer"></footer>
   </section>
 </main>
+<div id="vzoom" hidden role="dialog" aria-label="報告の画面"><span class="vclose">閉じる ×</span><img id="vzoomimg" alt=""></div>
 <div class="stickybar" id="stickybar" hidden><a class="primary" id="stickybtn" href="#" rel="noopener"></a></div>
 
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var F = null;      // 面の一覧とトップ画面の文言
+  // 部屋の報告のスクショ（10/4・名前とアイコンだけ伏せた画面。文字は変えない）。面ごとに1〜3枚＋全部の面に出す1枚
+  var VOICES_VER = "?v=20261004a";   // 画像を差し替えたらここを変える（ブラウザのキャッシュ対策）
+  var VOICES = {
+    benpi: [{ src: "img/voices/benpi_1.png", cap: "足の台で、魔法にかかったみたいに早く出た（9月）" },
+            { src: "img/voices/benpi_2.png", cap: "元々2日に1回だった人が、毎日出るように（9月）" },
+            { src: "img/voices/benpi_3.png", cap: "お腹の調子がとても良い（9月）" }],
+    hari: [{ src: "img/voices/hari_1.png", cap: "ポッコリカチカチだったお腹が、フニャフニャに（9月）" }],
+    ketsuatsu: [{ src: "img/voices/ketsuatsu_1.png", cap: "前屈で指が床につかなかった人が、その日についた（9月）" }],
+    kettou: [{ src: "img/voices/kettou_1.png", cap: "午後の眠気対策、今週100点満点（10月）" },
+             { src: "img/voices/kettou_2.png", cap: "今日も睡魔ありませんでした（9月）" }],
+    onaka: [{ src: "img/voices/onaka_1.png", cap: "毎晩ビール3本だった人が、5日ほとんど欲しくない（10月）" },
+            { src: "img/voices/onaka_2.png", cap: "ポッコリカチカチだったお腹が、フニャフニャに（9月）" }],
+    common: [{ src: "img/voices/common_1.png", cap: "朝まで眠れたのは半年ぶり（10月）" }]
+  };
+  function renderVoices(face) {
+    var list = (VOICES[face] || []).concat(VOICES.common || []);
+    var box = $("rvoices"); box.innerHTML = "";
+    list.forEach(function (v) {
+      var fg = document.createElement("figure");
+      var im = document.createElement("img"); im.src = v.src + VOICES_VER; im.alt = v.cap; im.loading = "lazy";
+      im.addEventListener("click", function () { openZoom(v.src + VOICES_VER, v.cap); });
+      var fc = document.createElement("figcaption"); fc.textContent = v.cap;
+      fg.appendChild(im); fg.appendChild(fc); box.appendChild(fg);
+    });
+    $("voices").hidden = list.length === 0;
+  }
+  function openZoom(src, cap) {
+    var z = $("vzoom"), im = $("vzoomimg");
+    im.alt = cap; im.src = src;
+    im.onload = function () { im.style.width = Math.max(window.innerWidth - 24, im.naturalWidth) + "px"; };
+    z.hidden = false; document.body.style.overflow = "hidden";
+    track("voice_zoom", { face: C ? C.key : "" });
+  }
+  function closeZoom() { $("vzoom").hidden = true; document.body.style.overflow = ""; }
   var C = null;      // いま選んだ面の設定
   var answers = {};
   var step = 0;
@@ -438,6 +488,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("rrisk", r.risk); $("risksec").hidden = !r.risk;
     text("rtaste", r.taste || r.today);   // 10/2 先生「試食は少しだけ」＝today（やる量）はページに出さず、入口の1行だけ
     text("rpromise", C.cta.promise || "");
+    renderVoices(C.key);
     var chap = C.cta.note ? C.cta.note.replace("{chapter}", r.chapter || "") : (r.chapter ? ("部屋のnoteでは、" + r.chapter + "から読んでください。") : "");
     text("rchapter", chap); $("rchapter").hidden = !chap;
     var flags = C.flags(answers);
@@ -532,6 +583,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     }
   }
 
+  $("vzoom").addEventListener("click", closeZoom);
   load("types/index.js", function () {
     F = window.TYPECHECK_FACES;
     if (!F) { text("s_sub", "設定が読み込めませんでした。"); return; }

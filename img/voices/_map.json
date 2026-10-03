@@ -1,0 +1,58 @@
+{
+ "benpi": [
+  {
+   "src": "img/voices/benpi_1.png",
+   "cap": "足の台で、魔法にかかったみたいに早く出た（9月）"
+  },
+  {
+   "src": "img/voices/benpi_2.png",
+   "cap": "1か月に数回だった人が、朝からトイレに行けた（10月）"
+  },
+  {
+   "src": "img/voices/benpi_3.png",
+   "cap": "お腹の調子がとても良い（9月）"
+  }
+ ],
+ "hari": [
+  {
+   "src": "img/voices/hari_1.png",
+   "cap": "ポッコリカチカチだったお腹が、フニャフニャに（9月）"
+  },
+  {
+   "src": "img/voices/hari_2.png",
+   "cap": "するするもりもり（9月）"
+  }
+ ],
+ "ketsuatsu": [
+  {
+   "src": "img/voices/ketsuatsu_1.png",
+   "cap": "前屈で指が床につかなかった人が、その日についた（9月）"
+  }
+ ],
+ "kettou": [
+  {
+   "src": "img/voices/kettou_1.png",
+   "cap": "午後の眠気対策、今週100点満点（10月）"
+  },
+  {
+   "src": "img/voices/kettou_2.png",
+   "cap": "今日も睡魔ありませんでした（9月）"
+  }
+ ],
+ "onaka": [
+  {
+   "src": "img/voices/onaka_1.png",
+   "cap": "毎晩ビール3本だった人が、5日ほとんど欲しくない（10月）"
+  },
+  {
+   "src": "img/voices/onaka_2.png",
+   "cap": "ポッコリカチカチだったお腹が、フニャフニャに（9月）"
+  }
+ ],
+ "common": [
+  {
+   "src": "img/voices/common_1.png",
+   "cap": "朝まで眠れたのは半年ぶり（10月）"
+  }
+ ]
+}
