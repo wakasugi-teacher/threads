@@ -3,7 +3,7 @@
 window.TYPECHECK = {
   key: "ketsuatsu",
   title: "血圧タイプチェック",
-  lead: "8問で終わります。前半4問で、血圧を下げる手が「野菜・果物、朝の繊維、動き、お酒」のどこで空いているかが分かります。後半4問は、部屋に貼る1行になります。",
+  lead: "8問で終わります。前半4問で、血圧を下げる手が「野菜・果物、朝の繊維、動き、お酒」のどこで空いているかが分かります。後半4問は、研究室に貼る1行になります。",
   axes: ["野菜・果物", "朝の繊維", "動き", "お酒"],
 
   questions: [
@@ -177,7 +177,7 @@ window.TYPECHECK = {
     pasteTitle: "報告する1行（ボタンを押すと、コピーされます）",
     button: "オプチャで相談してみる（1行を貼るだけ）",
     url: "https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
-    under: "LINEのオープンチャット「腸リバース研究室」が開きます。上の1行はコピーしてあるので、部屋の報告のスレッドに貼るだけです。人数が増えるほど1人ずつ返すのは難しくなるので、約200人のいまのうちに。"
+    under: "LINEのオープンチャット「腸リバース研究室」が開きます。上の1行はコピーしてあるので、研究室の報告のスレッドに貼るだけです。人数が増えるほど1人ずつ返すのは難しくなるので、約200人のいまのうちに。"
   },
 
   summary: function (a, resultName, labels) {

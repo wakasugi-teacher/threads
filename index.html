@@ -284,7 +284,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <div class="vgrid" id="rvoices"></div>
       <p class="vlabel" id="vcommonhead">型はちがっても、腸から変わった人</p>
       <div class="vgrid" id="rvoices2"></div>
-      <p class="small">研究室の報告の画面そのままです。名前とアイコンだけ伏せて、文字は変えていません。赤い線が、起きたこと。黒く塗った所が、やり方です。本当かどうかは、部屋に入って確かめてください。タップで大きくなります。</p>
+      <p class="small">研究室の報告の画面そのままです。名前とアイコンだけ伏せて、文字は変えていません。赤い線が、起きたこと。黒く塗った所が、やり方です。本当かどうかは、研究室に入って確かめてください。タップで大きくなります。</p>
     </div>
     <div class="cta stack">
       <p class="eyebrow">Next step</p>
@@ -311,10 +311,10 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
           <li>ドカ食いが止まらない人の、たった一つのコツ。我慢は使いません</li>
           <li>夜のせいじゃなかった。眠りは、朝の過ごし方で決まっていた話</li>
           <li>夕方に靴がきつい人へ。むくみを、座ったまま抜く動かし方</li>
-          <li>腸リバース式便秘改善プログラム〜毎朝スッキリ出る2週間ロードマップ〜（10月8日で部屋から下げます）</li>
+          <li>腸リバース式便秘改善プログラム〜毎朝スッキリ出る2週間ロードマップ〜（10月8日で研究室から下げます）</li>
           <li>寝ても取れない疲れの、意外な犯人と、回復する体に戻す食べ方</li>
         </ul>
-        <p class="small">いまの棚はこの5本。入れ替え制なので、次に見たときは別の物になっています。部屋のいちばん上に置いてあります。</p>
+        <p class="small">いまの棚はこの5本。入れ替え制なので、次に見たときは別の物になっています。研究室のいちばん上に置いてあります。</p>
       </div>
       <h3 id="pastetitle"></h3>
       <div class="paste" id="paste"></div>
@@ -340,7 +340,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var F = null;      // 面の一覧とトップ画面の文言
-  // 部屋の報告のスクショ（10/4・名前とアイコンだけ伏せた画面。文字は変えない）。面ごとに1〜3枚＋全部の面に出す1枚
+  // 研究室の報告のスクショ（10/4・名前とアイコンだけ伏せた画面。文字は変えない）。面ごとに1〜3枚＋全部の面に出す1枚
   var VOICES_VER = "?v=20261004e";   // 画像を差し替えたらここを変える（ブラウザのキャッシュ対策）
   var VOICES = {
     benpi: [{ src: "img/voices/benpi_1.png", cap: "魔法にかかったみたいに早く出た（9月）" },
@@ -524,7 +524,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     text("rtaste", r.taste || r.today);   // 10/2 先生「試食は少しだけ」＝today（やる量）はページに出さず、入口の1行だけ
     text("rpromise", C.cta.promise || "");
     renderVoices(C.key);
-    var chap = C.cta.note ? C.cta.note.replace("{chapter}", r.chapter || "") : (r.chapter ? ("部屋のnoteでは、" + r.chapter + "から読んでください。") : "");
+    var chap = C.cta.note ? C.cta.note.replace("{chapter}", r.chapter || "") : (r.chapter ? ("研究室のnoteでは、" + r.chapter + "から読んでください。") : "");
     text("rchapter", chap); $("rchapter").hidden = !chap;
     var flags = C.flags(answers);
     var chips = $("chips"); chips.innerHTML = "";
@@ -538,9 +538,9 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     var ex = C.extra ? C.extra(answers) : ""; text("rextra", ex); $("rextra").hidden = !ex;
     text("ctalead", C.cta.lead); text("ctahow", C.cta.how);
     var fl = ""; (F.faces || []).forEach(function (f) { if (f.key === C.key) fl = f.label; });
-    text("giftlead", r.name + "の14日ぶんを、1日ずつ書いた表です。部屋に置いてあります。");
+    text("giftlead", r.name + "の14日ぶんを、1日ずつ書いた表です。研究室に置いてあります。");
     text("giftroute", "いちばん上のアナウンスの「型別の2週間表」→「" + fl + "」→「" + r.name + "」で開きます。");
-    text("pastetitle", C.cta.pasteTitle || "部屋に貼る1行");
+    text("pastetitle", C.cta.pasteTitle || "研究室に貼る1行");
     var line = C.summary ? C.summary(answers, r.name, hearingLabels()) : ("【" + C.title + "】" + r.name);
     text("paste", line); text("copied", "");
     var a = $("ctabtn"); a.textContent = C.cta.button; a.href = C.cta.url;
