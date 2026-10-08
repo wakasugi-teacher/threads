@@ -197,7 +197,7 @@ window.TYPECHECK = {
     button: "オプチャで相談してみる（1行を貼るだけ）",
     url: "https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
     under: "LINEのオープンチャット「腸リバース研究室」が開きます。上の1行はコピーしてあるので、研究室の報告のスレッドに貼るだけです。人数が増えるほど1人ずつ返すのは難しくなるので、約200人のいまのうちに。",
-    note: "研究室の中だけで10月8日までプレゼントしている「腸リバース式便秘改善プログラム」（参考文献40本・16,000字）は、{chapter}から読んでください。"
+    note: "あなたの型の続き（何を、どれだけ、何時に）は、上の1行を研究室に貼ってもらえれば、翌日の20時にこちらから返します。"
   },
 
   // 研究室に貼る1行
