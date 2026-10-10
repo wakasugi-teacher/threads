@@ -268,6 +268,15 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     </div>
     <div class="warn" id="redflag"></div>
     <p id="rextra" class="small"></p>
+    <div class="cta stack" id="cta_early">
+      <p class="eyebrow">Next step</p>
+      <h3 class="cta-title">この型の続きを、受け取る</h3>
+      <p id="ectalead"></p>
+      <h3 id="epastetitle">研究室に貼る1行（ボタンを押すと、コピーされます）</h3>
+      <div class="paste" id="paste_e"></div>
+      <a class="primary" id="ctabtn_e" href="#" rel="noopener"></a>
+      <p class="small" id="ectaunder"></p>
+    </div>
     <div class="sell">
       <p class="eyebrow">この型を戻す手法</p>
       <h3 class="sell-title">腸リバース</h3>
@@ -320,7 +329,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <a class="primary" id="ctabtn" href="#" rel="noopener"></a>
       <p class="small" id="ctaunder"></p>
       <p class="small">押しても開かないときは、このリンクを長押しして「LINEで開く」を選んでください：<a id="rawlink" href="#" rel="noopener">腸リバース研究室（LINE）</a></p>
-      <p class="small">LINEが開いたら、「参加」→名前を決める（本名でなくて大丈夫です）→「◯月◯日の報告はこちら」と書いてある投稿の「スレッド内メッセージを見る」に、コピーした1行を貼る。この3つで届きます。</p>
+      <p class="small">LINEが開いたら、「参加」→名前を決める（本名でなくて大丈夫です）→トークに、コピーした1行を貼る。この3つで届きます。場所は気にしなくて大丈夫です。初めての1行は、どこに貼っても僕が見つけます。</p>
       <div class="copyrow"><button class="copy" id="copybtn" type="button">1行をコピーだけする</button><span class="small" id="copied"></span></div>
       <p class="small" id="rchapter"></p>
     </div>
@@ -513,6 +522,14 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     return out;
   }
 
+  // 相談ボタン（上の早い方と下の本物）のどちらかが画面に入っているか
+  function btnInView(id) {
+    var el = $(id); if (!el || el.offsetParent === null) return false;
+    var r = el.getBoundingClientRect();
+    return r.top < window.innerHeight && r.bottom > 0;
+  }
+  function anyBtnInView() { return btnInView("ctabtn") || btnInView("ctabtn_e"); }
+
   function showResult() {
     var k = C.decide(answers);
     var r = C.results[k] || C.results.none;
@@ -546,13 +563,18 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     var sb = $("stickybtn"); sb.textContent = C.cta.button; sb.href = C.cta.url;
     $("rawlink").href = C.cta.url;
     text("ctaunder", C.cta.under);
+    // 10/10夜 先生「やって」＝結果の直下にも相談の入口（結果→相談が35人中1人＝下まで届いていない）。1行と押す所を結果のすぐ下に置き、貼る場所は「トーク」に（スレッド探しでつまずく人がいた）
+    text("ectalead", C.cta.earlyLead || "ここから先（何を、どれだけ、何時に）は人で違うので、研究室で1人ずつ渡しています。下の1行を貼るだけで、翌日の20時に、あなたの悩みへの答えが届きます。匿名のままで大丈夫です。");
+    text("paste_e", line);
+    var ae = $("ctabtn_e"); ae.textContent = C.cta.button; ae.href = C.cta.url;
+    text("ectaunder", "ボタンを押すと、上の1行をコピーしてLINEが開きます。開いたら「参加」→名前を決める（本名でなくて大丈夫です）→トークに貼る。場所は気にしなくて大丈夫です。初めての1行は、どこに貼っても僕が見つけて、翌日の20時に返します。");
     var ul = $("rules"); ul.innerHTML = "";
     (C.rules || []).forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
     text("footer", F.footer);
     $("pbar").style.width = "100%";
     show("result");
     $("stickybar").hidden = false;
-    setTimeout(function () { var r = $("ctabtn").getBoundingClientRect(); $("stickybar").hidden = (r.top < window.innerHeight && r.bottom > 0); }, 50);
+    setTimeout(function () { $("stickybar").hidden = anyBtnInView(); }, 50);
   }
 
   function copyLine() {
@@ -569,11 +591,11 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
 
   // consult の計測は pointerdown と click の両方で呼ぶ（LINEへ飛ぶ前に送信が終わるように）。1.5秒以内の重複は1回に数える
   var lastConsultAt = 0;
-  function consultTrack(face, type) {
+  function consultTrack(face, type, pos) {
     var now = Date.now();
     if (now - lastConsultAt < 1500) return;
     lastConsultAt = now;
-    track("consult", { face: face, type: type });
+    track("consult", { face: face, type: type, pos: pos || "" });
   }
   // 「オプチャで相談してみる」＝1行をコピーしてから、そのままLINEを開く（タップ1回）
   function consult(e) {
@@ -581,7 +603,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     if (e && e.preventDefault) e.preventDefault();
     var t = $("paste").textContent;
     var url = (C && C.cta && C.cta.url) || $("ctabtn").href;
-    consultTrack(C ? C.key : "", lastType);
+    var pos = (e && e.currentTarget && e.currentTarget.id) || "";   // どのボタンが押されたか（ctabtn_e＝結果の直下／ctabtn＝下／stickybtn＝固定）
+    consultTrack(C ? C.key : "", lastType, pos);
     text("copied", "1行をコピーしました。LINEを開いています…");
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).catch(function () {});
@@ -598,22 +621,22 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     $("d_back").addEventListener("click", showFaces);
     $("copybtn").addEventListener("click", copyLine);
     $("ctabtn").addEventListener("click", consult);
+    $("ctabtn_e").addEventListener("click", consult);
     $("stickybtn").addEventListener("click", consult);
-    // 結果画面：本物のボタンが画面に入ったら、下の固定ボタンは隠す（スクロール判定が本線・IntersectionObserverは補助）
+    // 結果画面：本物のボタン（上か下）が画面に入ったら、下の固定ボタンは隠す（スクロール判定が本線・IntersectionObserverは補助）
     function syncSticky() {
       if ($("result").hidden) { $("stickybar").hidden = true; return; }
-      var r = $("ctabtn").getBoundingClientRect();
-      var inView = r.top < window.innerHeight && r.bottom > 0;
-      $("stickybar").hidden = inView;
+      $("stickybar").hidden = anyBtnInView();
     }
     window.addEventListener("scroll", syncSticky, { passive: true });
     window.addEventListener("resize", syncSticky);
     if ("IntersectionObserver" in window) {
+      var vis = {};
       var io = new IntersectionObserver(function (es) {
-        var onScreen = es[0] && es[0].isIntersecting;
-        $("stickybar").hidden = !!onScreen || $("result").hidden;
+        es.forEach(function (en) { vis[en.target.id] = en.isIntersecting; });
+        $("stickybar").hidden = !!(vis.ctabtn || vis.ctabtn_e) || $("result").hidden;
       }, { threshold: 0.25 });
-      io.observe($("ctabtn"));
+      io.observe($("ctabtn")); io.observe($("ctabtn_e"));
     }
   }
 
