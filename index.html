@@ -71,6 +71,7 @@ p { margin: 0 0 12px; }
 .start-btn:active { transform: translateY(1px); }
 .hero-meta { font-family: var(--display); font-size: 17px; line-height: 1.7; margin: 20px 0 0; color: var(--fg); }
 .hero-by { font-family: var(--display); font-size: 13px; letter-spacing: .08em; color: var(--muted); margin: 16px 0 0; }
+.skip-link { display: inline-block; font-family: var(--display); font-size: 14px; line-height: 1.6; color: var(--fg); text-decoration: underline; text-underline-offset: 4px; margin: 14px 0 0; padding: 6px 10px; }
 
 .card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
 
@@ -215,6 +216,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     <div class="medal"><img src="assets/medallion.png" alt="" width="526" height="526"></div>
     <button class="start-btn" id="s_btn" type="button">START</button>
     <p class="hero-meta"><span id="s_time">所要時間 2分</span><br><span id="s_count">全8問</span></p>
+    <a class="skip-link" id="s_skip" href="https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">投稿で3つ以上当てはまった人は、チェックを飛ばして研究室へ</a>
     <p class="hero-by" id="s_by">若すぎ先生・腸リバース研究室</p>
   </section>
 
@@ -614,6 +616,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
 
   function bind() {
     $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
+    // 10/12 先生「Notionのリンクにつないで一発でもいい」→投稿のツリー①で診断が済んだ人はチェックを飛ばして研究室へ（計測＝consult・face=skip・pos=s_skip）
+    $("s_skip").addEventListener("click", function (e) { e.preventDefault(); consultTrack("skip", "", "s_skip"); var u = $("s_skip").href; setTimeout(function () { window.location.href = u; }, 150); });
     $("d_btn").addEventListener("click", function (e) { e.preventDefault(); consultTrack("other", ""); var u = $("d_btn").href; setTimeout(function () { window.location.href = u; }, 150); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
