@@ -71,7 +71,9 @@ p { margin: 0 0 12px; }
 .start-btn:active { transform: translateY(1px); }
 .hero-meta { font-family: var(--display); font-size: 17px; line-height: 1.7; margin: 20px 0 0; color: var(--fg); }
 .hero-by { font-family: var(--display); font-size: 13px; letter-spacing: .08em; color: var(--muted); margin: 16px 0 0; }
-.skip-link { display: inline-block; font-family: var(--display); font-size: 14px; line-height: 1.6; color: var(--fg); text-decoration: underline; text-underline-offset: 4px; margin: 14px 0 0; padding: 6px 10px; }
+.skip-btn { display: inline-block; width: min(84%, 340px); box-sizing: border-box; margin: 18px 0 0; padding: 13px 18px; border: 1.5px solid var(--fg); border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--fg); font-family: var(--display); font-size: 16px; line-height: 1.4; text-decoration: none; }
+.skip-btn:active { transform: translateY(1px); }
+.skip-note { font-family: var(--display); font-size: 13px; line-height: 1.7; color: var(--muted); margin: 10px auto 0; max-width: 340px; }
 
 .card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px 22px; box-shadow: var(--shadow); }
 
@@ -216,7 +218,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     <div class="medal"><img src="assets/medallion.png" alt="" width="526" height="526"></div>
     <button class="start-btn" id="s_btn" type="button">START</button>
     <p class="hero-meta"><span id="s_time">所要時間 2分</span><br><span id="s_count">全8問</span></p>
-    <a class="skip-link" id="s_skip" href="https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">投稿で3つ以上当てはまった人は、チェックを飛ばして研究室へ</a>
+    <a class="skip-btn" id="s_skip" href="https://line.me/ti/g2/69-75A1gh3Ttoy0PiqOduBgTs-c6ikZBjYaWXw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default">チェックを飛ばして、研究室に入る</a>
+    <p class="skip-note" id="s_skipnote">匿名で入れます。入ったら、いまの悩みを1行だけ。翌日の20時に、僕から返事をします。</p>
     <p class="hero-by" id="s_by">若すぎ先生・腸リバース研究室</p>
   </section>
 
