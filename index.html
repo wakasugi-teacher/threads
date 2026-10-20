@@ -333,7 +333,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       <div class="paste" id="paste"></div>
       <a class="primary" id="ctabtn" href="#" rel="noopener"></a>
       <p class="small" id="ctaunder"></p>
-      <p class="small">押しても開かないときは、このリンクを長押しして「LINEで開く」を選んでください：<a id="rawlink" href="#" rel="noopener">腸リバース研究室（LINE）</a></p>
+      <p class="small">押しても開かないときは、右上の「…」から「ブラウザで開く」を押すか、このリンクを長押しして「LINEで開く」を選んでください：<a id="rawlink" href="#" rel="noopener">腸リバース研究室（LINE）</a></p>
       <p class="small">LINEが開いたら、「参加」→名前を決める（本名でなくて大丈夫です）→トークに、コピーした1行を貼る。この3つで届きます。場所は気にしなくて大丈夫です。初めての1行は、どこに貼っても僕が見つけます。</p>
       <div class="copyrow"><button class="copy" id="copybtn" type="button">1行をコピーだけする</button><span class="small" id="copied"></span></div>
       <p class="small" id="rchapter"></p>
@@ -602,34 +602,54 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     lastConsultAt = now;
     track("consult", { face: face, type: type, pos: pos || "" });
   }
+  // LINEを開く（10/20）＝タップの中でそのままLINEアプリ（line://）へ飛ばす。iPhoneとThreadsのアプリ内ブラウザは、タップの直後でないとアプリを開かない。
+  // 1.2秒たっても画面が切り替わらなければ（アプリが開かなかった）、いままでのウェブのリンクへ落とす
+  function openLine(url) {
+    var m = /^https:\/\/line\.me\/(ti\/g2\/[^?#]+)/.exec(url || "");
+    var app = m ? "line://" + m[1] : "";
+    if (!app) { window.location.href = url; return; }
+    var started = Date.now();
+    setTimeout(function () {
+      if (!document.hidden && Date.now() - started < 2500) window.location.href = url;
+    }, 1200);
+    window.location.href = app;
+  }
   // 「オプチャで相談してみる」＝1行をコピーしてから、そのままLINEを開く（タップ1回）
+  // 10/20 先生「consultは入っているのにオプチャが増えない」＝0.25秒のタイマーのあとに飛ばしていたのでタップ扱いが切れ、LINEアプリでなくline.meのページが開いていた→タイマーをやめてタップの中で飛ばす（計測はpointerdownで先に送る）
   function consult(e) {
-    // 10/2夜 先生「やたら連打してる奴いる」＝新しいタブ（target=_blank）がThreadsのアプリ内ブラウザで開かず、押しても何も起きない人がいるとみて、同じ画面でLINEのリンクへ移動する形に
     if (e && e.preventDefault) e.preventDefault();
     var t = $("paste").textContent;
     var url = (C && C.cta && C.cta.url) || $("ctabtn").href;
     var pos = (e && e.currentTarget && e.currentTarget.id) || "";   // どのボタンが押されたか（ctabtn_e＝結果の直下／ctabtn＝下／stickybtn＝固定）
     consultTrack(C ? C.key : "", lastType, pos);
-    text("copied", "1行をコピーしました。LINEを開いています…");
+    text("copied", "1行をコピーしました。LINEを開いています… 開かないときは、右上の「…」から「ブラウザで開く」を押すか、下のリンクを長押ししてください。");
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).catch(function () {});
     }
-    setTimeout(function () { window.location.href = url; }, 250);
+    openLine(url);
+  }
+  // 計測を先に送る（指が触れた瞬間）。clickでも呼ぶが1.5秒以内は1回に数える
+  function consultPre(e) {
+    var pos = (e && e.currentTarget && e.currentTarget.id) || "";
+    consultTrack(C ? C.key : "", lastType, pos);
   }
 
   function bind() {
     $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
     // 10/12 先生「Notionのリンクにつないで一発でもいい」→投稿のツリー①で診断が済んだ人はチェックを飛ばして研究室へ（計測＝consult・face=skip・pos=s_skip）
-    $("s_skip").addEventListener("click", function (e) { e.preventDefault(); consultTrack("skip", "", "s_skip"); var u = $("s_skip").href; setTimeout(function () { window.location.href = u; }, 150); });
-    $("d_btn").addEventListener("click", function (e) { e.preventDefault(); consultTrack("other", ""); var u = $("d_btn").href; setTimeout(function () { window.location.href = u; }, 150); });
+    $("s_skip").addEventListener("pointerdown", function () { consultTrack("skip", "", "s_skip"); });
+    $("s_skip").addEventListener("click", function (e) { e.preventDefault(); consultTrack("skip", "", "s_skip"); openLine($("s_skip").href); });
+    $("d_btn").addEventListener("pointerdown", function () { consultTrack("other", ""); });
+    $("d_btn").addEventListener("click", function (e) { e.preventDefault(); consultTrack("other", ""); openLine($("d_btn").href); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
     $("d_back").addEventListener("click", showFaces);
     $("copybtn").addEventListener("click", copyLine);
-    $("ctabtn").addEventListener("click", consult);
-    $("ctabtn_e").addEventListener("click", consult);
-    $("stickybtn").addEventListener("click", consult);
+    ["ctabtn", "ctabtn_e", "stickybtn"].forEach(function (id) {
+      $(id).addEventListener("pointerdown", consultPre);
+      $(id).addEventListener("click", consult);
+    });
     // 結果画面：本物のボタン（上か下）が画面に入ったら、下の固定ボタンは隠す（スクロール判定が本線・IntersectionObserverは補助）
     function syncSticky() {
       if ($("result").hidden) { $("stickybar").hidden = true; return; }
