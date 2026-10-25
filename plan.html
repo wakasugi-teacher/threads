@@ -176,13 +176,28 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   function track(name, data) { if (!TRACK) return; try { if (window.umami && window.umami.track) window.umami.track(name, data || {}); } catch (e) {} }
   // LINEを開く（10/20）＝タップの中でそのままLINEアプリ（line://）へ飛ばす。iPhoneとThreadsのアプリ内ブラウザは、タップの直後でないとアプリを開かない。
   // 1.2秒たっても画面が切り替わらなければ（アプリが開かなかった）、いままでのウェブのリンクへ落とす
-  function openLine(url) {
+  // 10/25 計測＝LINEアプリが開いた＝app_open／1.2秒たっても表のまま＝web_fallback（index.htmlと同じ）
+  function openLine(url, meta) {
     var m = /^https:\/\/line\.me\/(ti\/g2\/[^?#]+)/.exec(url || "");
     var app = m ? "line://" + m[1] : "";
     if (!app) { window.location.href = url; return; }
-    var started = Date.now();
+    var started = Date.now(), done = false;
+    function onHide(e) {
+      if (done) return;
+      var hid = document.hidden || (e && e.type === "pagehide");
+      if (hid && Date.now() - started < 2500) { done = true; track("app_open", meta || {}); }
+    }
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onHide);
     setTimeout(function () {
-      if (!document.hidden && Date.now() - started < 2500) window.location.href = url;
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onHide);
+      if (done) return;
+      if (!document.hidden && Date.now() - started < 2500) {
+        done = true;
+        track("web_fallback", meta || {});
+        setTimeout(function () { window.location.href = url; }, 300);
+      }
     }, 1200);
     window.location.href = app;
   }
@@ -349,8 +364,8 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     } else { text("p_copied", "上の1行を長押しでコピーしてください"); }
   }
   $("p_copy").addEventListener("click", function () { copyReport("コピーしました"); });
-  $("gate_btn").addEventListener("click", function (e) { if (e && e.preventDefault) e.preventDefault(); track("plan_gate_click", { face: face }); openLine($("gate_btn").href); });
-  $("p_reportbtn").addEventListener("click", function (e) { if (e && e.preventDefault) e.preventDefault(); track("plan_report", { face: face, type: D.plans[face][type].name, days: getJ(skey(), []).length }); copyReport("1行をコピーしました。部屋の報告のスレッドに貼ってください");  openLine($("p_reportbtn").href); });
+  $("gate_btn").addEventListener("click", function (e) { if (e && e.preventDefault) e.preventDefault(); track("plan_gate_click", { face: face }); openLine($("gate_btn").href, { face: face, pos: "gate_btn" }); });
+  $("p_reportbtn").addEventListener("click", function (e) { if (e && e.preventDefault) e.preventDefault(); track("plan_report", { face: face, type: D.plans[face][type].name, days: getJ(skey(), []).length }); copyReport("1行をコピーしました。部屋の報告のスレッドに貼ってください");  openLine($("p_reportbtn").href, { face: face, pos: "p_reportbtn" }); });
 
   $("t_back").addEventListener("click", showFaces);
   $("p_back").addEventListener("click", showTypes);

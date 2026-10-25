@@ -604,13 +604,28 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   }
   // LINEを開く（10/20）＝タップの中でそのままLINEアプリ（line://）へ飛ばす。iPhoneとThreadsのアプリ内ブラウザは、タップの直後でないとアプリを開かない。
   // 1.2秒たっても画面が切り替わらなければ（アプリが開かなかった）、いままでのウェブのリンクへ落とす
-  function openLine(url) {
+  // 10/25 計測＝LINEアプリが開いた（画面が裏に回った）＝app_open／1.2秒たっても表のまま＝web_fallback（ウェブのline.meに落とす前に送る）
+  function openLine(url, meta) {
     var m = /^https:\/\/line\.me\/(ti\/g2\/[^?#]+)/.exec(url || "");
     var app = m ? "line://" + m[1] : "";
     if (!app) { window.location.href = url; return; }
-    var started = Date.now();
+    var started = Date.now(), done = false;
+    function onHide(e) {
+      if (done) return;
+      var hid = document.hidden || (e && e.type === "pagehide");
+      if (hid && Date.now() - started < 2500) { done = true; track("app_open", meta || {}); }
+    }
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onHide);
     setTimeout(function () {
-      if (!document.hidden && Date.now() - started < 2500) window.location.href = url;
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onHide);
+      if (done) return;
+      if (!document.hidden && Date.now() - started < 2500) {
+        done = true;
+        track("web_fallback", meta || {});
+        setTimeout(function () { window.location.href = url; }, 300);
+      }
     }, 1200);
     window.location.href = app;
   }
@@ -626,7 +641,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).catch(function () {});
     }
-    openLine(url);
+    openLine(url, { face: C ? C.key : "", type: lastType, pos: pos });
   }
   // 計測を先に送る（指が触れた瞬間）。clickでも呼ぶが1.5秒以内は1回に数える
   function consultPre(e) {
@@ -638,9 +653,9 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
     $("s_btn").addEventListener("click", function () { track("start"); showFaces(); });
     // 10/12 先生「Notionのリンクにつないで一発でもいい」→投稿のツリー①で診断が済んだ人はチェックを飛ばして研究室へ（計測＝consult・face=skip・pos=s_skip）
     $("s_skip").addEventListener("pointerdown", function () { consultTrack("skip", "", "s_skip"); });
-    $("s_skip").addEventListener("click", function (e) { e.preventDefault(); consultTrack("skip", "", "s_skip"); openLine($("s_skip").href); });
+    $("s_skip").addEventListener("click", function (e) { e.preventDefault(); consultTrack("skip", "", "s_skip"); openLine($("s_skip").href, { face: "skip", type: "", pos: "s_skip" }); });
     $("d_btn").addEventListener("pointerdown", function () { consultTrack("other", ""); });
-    $("d_btn").addEventListener("click", function (e) { e.preventDefault(); consultTrack("other", ""); openLine($("d_btn").href); });
+    $("d_btn").addEventListener("click", function (e) { e.preventDefault(); consultTrack("other", ""); openLine($("d_btn").href, { face: "other", type: "", pos: "d_btn" }); });
     $("f_back").addEventListener("click", showStart);
     $("back").addEventListener("click", function () { if (step > 0) { step--; showQuestion(); } });
     $("again").addEventListener("click", function () { answers = {}; step = 0; showFaces(); });
