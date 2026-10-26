@@ -49,7 +49,8 @@ window.TYPECHECK = {
       choices: [
         { v: "high", label: "高めと言われた（数字は覚えていない）", short: "高めと言われた" },
         { v: "pre", label: "HbA1cが5.6〜6.4", short: "HbA1c 5.6〜6.4" },
-        { v: "over", label: "HbA1cが6.5以上か、血糖の薬を飲んでいる", short: "6.5以上か薬あり" },
+        { v: "over", label: "HbA1cが6.5以上（薬はまだ出ていない）", short: "6.5以上・薬なし" },
+        { v: "med", label: "血糖の薬か注射を使っている（通院中）", short: "薬あり・通院中" },
         { v: "none", label: "引っかかっていない。分からない", short: "引っかかっていない" }
       ]
     },
@@ -105,7 +106,8 @@ window.TYPECHECK = {
   },
 
   extra: function (a) {
-    if (a.kenshin === "over") return "HbA1cが6.5以上の人、血糖の薬を飲んでいる人は、食べ方を変える前に主治医に一言。この結果より、主治医の指示が先です。";
+    if (a.kenshin === "med") return "血糖の薬や注射を使っている人は、主治医の方針が先です。この結果は、食べる順番・時刻・食後の動きを主治医と相談しながら試すための物で、食べる量と薬には触れません。食べ方を変える前に、主治医に一言。";
+    if (a.kenshin === "over") return "HbA1cが6.5以上の人は、食べ方を変える前に主治医に一言。この結果より、主治医の指示が先です。";
     return "";
   },
 
