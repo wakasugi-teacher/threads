@@ -177,6 +177,30 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
   // LINEを開く（10/20）＝タップの中でそのままLINEアプリ（line://）へ飛ばす。iPhoneとThreadsのアプリ内ブラウザは、タップの直後でないとアプリを開かない。
   // 1.2秒たっても画面が切り替わらなければ（アプリが開かなかった）、いままでのウェブのリンクへ落とす
   // 10/25 計測＝LINEアプリが開いた＝app_open／1.2秒たっても表のまま＝web_fallback（index.htmlと同じ）
+  // 10/26 先生「落ちた人を拾う」＝1.2秒たってもLINEアプリが開かなければ、ウェブのline.meへ飛ばさずに、この画面の下に案内を出す
+  // （1行はコピー済み／右上の「…」→「ブラウザで開く」／もう一度LINEで開く／ウェブのLINEで開く）。計測＝web_fallback（落ちた）・fallback_retry（もう一度）・fallback_web（ウェブへ）
+  function showLineFallback(app, url, meta) {
+    var box = document.getElementById("line_fallback");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "line_fallback";
+      box.setAttribute("role", "dialog");
+      box.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#fff;color:#222;border-top:1px solid #e3d5cf;box-shadow:0 -8px 24px rgba(0,0,0,.12);padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));font-size:15px;line-height:1.7;";
+      box.innerHTML =
+        '<div style="font-weight:700;font-size:16px;margin-bottom:6px;">LINEが開きませんでした</div>' +
+        '<div style="margin-bottom:12px;">右上の「…」から「ブラウザで開く」を押すと、LINEアプリで開けます。</div>' +
+        '<button type="button" id="lf_retry" style="display:block;width:100%;padding:14px;border:0;border-radius:12px;background:#06c755;color:#fff;font-size:16px;font-weight:700;margin-bottom:8px;cursor:pointer;">もう一度LINEで開く</button>' +
+        '<a id="lf_web" rel="noopener" style="display:block;width:100%;box-sizing:border-box;padding:12px;border:1px solid #06c755;border-radius:12px;color:#06c755;text-align:center;text-decoration:none;font-size:15px;margin-bottom:8px;">ウェブのLINEで開く</a>' +
+        '<button type="button" id="lf_close" style="display:block;width:100%;padding:10px;border:0;background:none;color:#888;font-size:13px;cursor:pointer;">閉じる</button>';
+      document.body.appendChild(box);
+      document.getElementById("lf_close").addEventListener("click", function () { box.style.display = "none"; });
+    }
+    var retry = document.getElementById("lf_retry"), web = document.getElementById("lf_web");
+    retry.onclick = function () { track("fallback_retry", meta || {}); window.location.href = app; };
+    web.href = url;
+    web.onclick = function () { track("fallback_web", meta || {}); };
+    box.style.display = "block";
+  }
   function openLine(url, meta) {
     var m = /^https:\/\/line\.me\/(ti\/g2\/[^?#]+)/.exec(url || "");
     var app = m ? "line://" + m[1] : "";
@@ -196,7 +220,7 @@ footer { margin-top: 32px; font-size: 13px; color: var(--muted); line-height: 1.
       if (!document.hidden && Date.now() - started < 2500) {
         done = true;
         track("web_fallback", meta || {});
-        setTimeout(function () { window.location.href = url; }, 300);
+        showLineFallback(app, url, meta);
       }
     }, 1200);
     window.location.href = app;
